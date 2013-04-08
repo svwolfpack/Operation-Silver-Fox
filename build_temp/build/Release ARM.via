@@ -1,0 +1,10 @@
+--dll="/Users/Sam/Documents/Quick/Projects/Blockenspiel/build_temp/build/Release ARM/Blockenspiel.s3e"
+--data="/Users/Sam/Documents/Quick/Projects/Blockenspiel/resources"
+--app-icf1="/Users/Sam/Documents/Quick/Projects/Blockenspiel/resources/common.icf"
+--app-icf2="/Users/Sam/Documents/Quick/Projects/Blockenspiel/resources/app.icf"
+--config-txt1="/Developer/Marmalade/6.2/modules/iwbilling/docs/billing.config.txt"
+--config-txt2="/Developer/Marmalade/6.2/modules/iwgl/docs/iwgl.config.txt"
+--config-txt3="/Developer/Marmalade/6.2/modules/iwutil/docs/iwutil.config.txt"
+--config-txt4="/Developer/Marmalade/6.2/quick/docs/quick.config.txt"
+--config-txt5="/Developer/Marmalade/6.2/s3e/s3e.config.txt"
+--config-txt6="/Developer/Marmalade/6.2/s3e/s3e.config.txt"--s3e:app_version=0.0.1
