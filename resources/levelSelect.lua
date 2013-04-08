@@ -12,7 +12,8 @@ local scene = director:createScene()
 
 
 
-local levelPressed = function(event)
+function scene:setUp(event)
+   local levelPressed = function(event)
 		print (event)
 		if event.phase == "began" then
 			--system:sendEvent("transition", { screen = "home"})
@@ -25,12 +26,13 @@ local backPressed = function(event)
 			system:sendEvent("transition", { screen = "home", type = "slideInL"})
 		end
 end 
-
-function scene:setUp(event)
+   
    dbg.print("levelSelect:setUp")
      self.titleLabel = director:createLabel(50, director.displayHeight - 50, "Select Ein Level!")
      self.levelButton = director:createLabel(100, director.displayHeight - 200, "Eins")
      self.backButton =  director:createLabel(10, 100, "zurück")
+      
+      
       
     self.levelButton:addEventListener("touch", levelPressed)
     self.backButton:addEventListener("touch", backPressed)
@@ -46,7 +48,6 @@ function scene:tearDown(event)
 end
 
 
-
-
 scene:addEventListener({"setUp", "tearDown"}, scene)
+
 return scene -- We must return the scene object!
