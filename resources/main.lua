@@ -8,6 +8,7 @@
 
 local homeScreen = dofile("home.lua")
 local levelSelect = dofile("levelSelect.lua")
+local mainLevelScreen = dofile("mainLevelScreen.lua")
 
 --[[
 local touch = function(event)
@@ -22,32 +23,27 @@ end
 
 --]]
 
-function tprint (tbl, indent)
-  if not indent then indent = 0 end
-  for k, v in pairs(tbl) do
-    formatting = string.rep("  ", indent) .. k .. ": "
-    if type(v) == "table" then
-      print(formatting)
-      tprint(v, indent+1)
-    else
-      print(formatting .. v)
-    end
-  end
-end
 
 local transitionHandler = function(event)
 	
 	event.transitionType = event.transitionType or "slideInL"
 	
 	print "event:"
-	tprint(event, 0)
+	dbg.printTable(event)
 	print "------"
 	
 	if event.screen == "level select" then
 		director:moveToScene(levelSelect, {transitionType=event.transitionType, transitionTime=0.5})
+  
 	elseif event.screen == "home" then
 		director:moveToScene(homeScreen, {transitionType=event.transitionType, transitionTime=0.5})
 	
+  elseif event.screen == "main level screen" then
+    
+      mainLevelScreen.levelFileName = event.levelFileName
+      director:moveToScene(mainLevelScreen, {transitionType=event.transitionType, transitionTime=0.5})
+    
+  
 	end
 	
 end

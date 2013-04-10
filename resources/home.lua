@@ -12,20 +12,18 @@ local scene = director:createScene()
 
 
 function scene:setUp(event)
-       local playButtonTouched = function(event)
-		if event.phase == "began" then
-			system:sendEvent("transition", { screen = "level select", transitionType = "slideInR"})
-		end
-end  
-   
-    dbg.print("scene1:setUp")
-    	
-     self.titleLabel = director:createLabel(20, director.displayHeight - 50, "Velcome To Blockënspiel!")
-     self.playButton = director:createLabel(100, director.displayHeight - 200, "Spiel!")
-      
   
+    dbg.print("scene1:setUp")
+    self.titleLabel = director:createLabel(20, director.displayHeight - 50, "Velcome To Blockënspiel!")
+    self.playButton = director:createLabel(100, director.displayHeight - 200, "Spiel!")
       
-    self.playButton:addEventListener("touch", playButtonTouched)
+    function self.playButton:touch(event)
+      if event.phase == "began" then
+        system:sendEvent("transition", { screen = "level select", transitionType = "slideInR"})
+      end
+     end  
+     self.playButton:addEventListener("touch", self.playButton) -- So, as long as the name of the function entry in the table matches the event name, this will work
+     
         
 end
 
@@ -35,8 +33,6 @@ function scene:tearDown(event)
     self.titleLabel = self.titleLabel:removeFromParent() -- remove from the scene graph, and set self.label to nil
     self.playButton = self.playButton:removeFromParent()
 end
-
-
 
 
 scene:addEventListener({"setUp", "tearDown"}, scene)

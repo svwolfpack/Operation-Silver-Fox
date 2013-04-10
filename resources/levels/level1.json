@@ -1,0 +1,32 @@
+{
+ 	"levelName" : "Level Eins",
+	"backgroundImage" : "background1.png"
+	"gridHeight" : 8,
+	"gridWidth" : 8,
+	"tempo" : 100, 
+	"blocksAndActions" : [
+		{
+			"itemType" : "spawner" 
+			 "xGrid" : 5 
+			"yGrid" : 3 
+			 "data" : {} 
+		},
+		{
+			"itemType" : "note"
+			"xGrid" : 0
+			"yGrid" : 0
+			"data" : { 
+				"instrument" : "bass"
+				"note" : "e" 
+			}
+		},
+		{
+			"itemType" : "directionArrow"
+			"xGrid" : 0
+			"yGrid" : 0
+			"data" : { 
+				"direction" : "up"
+			}
+		}
+	]
+}
