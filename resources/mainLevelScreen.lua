@@ -9,7 +9,6 @@
 
 local scene = director:createScene()
 local cItem = dofile("item.lua") -- c prefix for class
-local cSceneTouchHandler = dofile("sceneTouchHandler.lua")
 
 local rectSize = 35 -- we may not need this once we're doing sprites...
 
@@ -94,21 +93,24 @@ function scene:renderItems()
   for i, v in ipairs(self.items) do  
     if v.xGrid == 0 or v.yGrid == 0 then -- place item in dock   
       v.xLocation, v.yLocation = self:coordinateLocationForDock()
-      v.sprite = director:createRectangle(v.xLocation, v.yLocation, rectSize, rectSize)
     else
       v.xLocation, v.yLocation = coordinateLocationsForGrid(v.xGrid, v.yGrid, self.gridXOrigin, self.gridYOrigin)
-      v.sprite = director:createRectangle(v.xLocation, v.yLocation, rectSize, rectSize)
     end
     
+    v.sprite = director:createRectangle(v.xLocation, v.yLocation, rectSize, rectSize)
     v.sprite.color = v.color
     v.sprite.zOrder = 1
-   
-    local touchHandler = self.sceneTouchHandler
+  
     function v.sprite:touch(event)
       if event.phase == "began" then
-        v.sprite.xOffset = v.sprite.x - event.x
-        v.sprite.yOffset = v.sprite.y - event.y
-        touchHandler:itemTouched(v)
+        system:setFocus(self)
+        self.xOffset = self.x - event.x
+        self.yOffset = self.y - event.y
+      elseif event.phase == "moved" then
+        self.x = event.x + self.xOffset
+        self.y = event.y + self.yOffset 
+      elseif event.phase == "ended" then
+        system:setFocus(nil)
       end
     end
     v.sprite:addEventListener("touch", v.sprite)  
@@ -117,10 +119,7 @@ end
 
 function scene:setUp(event)
   self.levelData = loadLevelJSON(self.levelFileName)
-  
-  self.sceneTouchHandler = cSceneTouchHandler:new()
-  self:addEventListener("touch", self.sceneTouchHandler)
-   
+     
   self.titleLabel = director:createLabel(20, director.displayHeight - 50, "Play Zis: ".. self.levelData.levelName)
     
   self.backButton =  director:createLabel(10, 10, "zurück")
