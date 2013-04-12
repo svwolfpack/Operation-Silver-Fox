@@ -1,4 +1,13 @@
-item = inheritsFrom(baseClass)
+--[[ 
+	Operation Silver Fox
+	v0.1
+	4/10/2012
+	
+	Item Object
+
+--]]
+
+local item = inheritsFrom(baseClass)
 
 function item:new()
   local i = item:create()
