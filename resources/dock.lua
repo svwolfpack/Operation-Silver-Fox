@@ -9,6 +9,7 @@
 local dock = inheritsFrom(baseClass)
 
 function dock:layoutDock()
+  print "laying out dock"
   for i, v in ipairs(self.items) do
     v.x = (i - 1) * (self.rectSize + 7) + self.dockRect.x
     v.y = self.dockRect.y
@@ -24,9 +25,8 @@ function dock:addToDock(item)
    self.currentIndex = self.currentIndex + 1
     item.dockIndex = self.currentIndex
     self.items[self.currentIndex] = item
-   
-    self:layoutDock()
   end
+  self:layoutDock()
 end
 
 function dock:removeFromDock(item)
@@ -44,8 +44,8 @@ function dock:removeFromDock(item)
     end
     self.items = newDock 
     self.currentIndex = newDockIndex
-    self:layoutDock()
   end
+  self:layoutDock()
 end
 
 function dock:new(dockRect, rectSize)

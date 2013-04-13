@@ -125,12 +125,9 @@ end
 function scene:layoutItem(item)
  if self:isOnGrid(item) then
    self:snapToGrid(item)
-   if item.dockIndex ~= 0 then self.dock:removeFromDock(item) end
+   self.dock:removeFromDock(item)
  else
-   --item.xGrid = 0
-   --item.yGrid = 0
-   if item.dockIndex == 0 then self.dock:addToDock(item) end
-   print "off grid :("
+   self.dock:addToDock(item) 
  end
 end
  
@@ -151,6 +148,7 @@ function scene:renderItems()
         system:setFocus(self.sprite)
         self.sprite.xOffset = self.sprite.x - event.x
         self.sprite.yOffset = self.sprite.y - event.y
+        self.sprite.zOrder = 2
       elseif event.phase == "moved" then
         self.sprite.x = event.x + self.sprite.xOffset
         self.sprite.y = event.y + self.sprite.yOffset 
@@ -159,6 +157,7 @@ function scene:renderItems()
         self.x = self.sprite.x
         self.y = self.sprite.y
         scene:layoutItem(self)
+        self.sprite.zOrder = 1
       end
       return true
     end
