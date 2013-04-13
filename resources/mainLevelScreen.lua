@@ -8,9 +8,11 @@
 --]]
 
 local scene = director:createScene()
-local cItem = dofile("item.lua") -- c prefix for class
+local cItem = dofile("item.lua") 
+local cDock = dofile("dock.lua")
 
 local rectSize = 35 -- we may not need this once we're doing sprites...
+local offGrid = -100
 
 local function loadLevelJSON(levelFileName)
   
@@ -78,29 +80,24 @@ function scene:coordinatesForGridIndices(xGrid, yGrid)
   xGrid = xGrid - 1
   yGrid = yGrid - 1
   
-  local xLocation  = xGrid * (rectSize + 1) + self.gridRect.x
-  local yLocation  = yGrid * (rectSize + 1) + self.gridRect.y
+  local x = xGrid * (rectSize + 1) + self.gridRect.x
+  local y = yGrid * (rectSize + 1) + self.gridRect.y
   
-  return xLocation, yLocation
+  return x, y
 end
 
-function scene:gridIndicesForCoordinates(xLocation, yLocation)
-  xLocation = xLocation - self.gridRect.x
-  yLocation = yLocation - self.gridRect.y
+function scene:gridIndicesForCoordinates(x, y)
+  x = x - self.gridRect.x
+  y = y - self.gridRect.y
   
-  local xGrid = math.floor(xLocation / (rectSize + 1)) + 1
-  local yGrid = math.floor(yLocation / (rectSize + 1)) + 1
+  local xGrid = math.floor(x / (rectSize + 1)) + 1
+  local yGrid = math.floor(y / (rectSize + 1)) + 1
   
   return xGrid, yGrid
 end
 
 local function centerOfItem(item)
-  return item.xLocation + math.floor(rectSize / 2), item.yLocation + math.floor(rectSize / 2)
-end
-
-function scene:coordinateLocationForDock()
-  self.dockIndex = self.dockIndex + 1
-  return (self.dockIndex - 1) * (rectSize + 7) + 10, 40
+  return item.x + math.floor(rectSize / 2), item.y + math.floor(rectSize / 2)
 end
  
 function scene:isOnGrid(item)
@@ -117,46 +114,35 @@ function scene:isOnGrid(item)
 end
 
 
-
-local function updateSpriteLocation(item)
-  item.sprite.x = item.xLocation
-  item.sprite.y = item.yLocation
-end
-
-
 function scene:snapToGrid(item)
   item.xGrid, item.yGrid = self:gridIndicesForCoordinates(centerOfItem(item))
-  item.xLocation, item.yLocation = self:coordinatesForGridIndices(item.xGrid, item.yGrid, self.gridXOrigin, self.gridYOrigin)
+  item.x, item.y = self:coordinatesForGridIndices(item.xGrid, item.yGrid, self.gridXOrigin, self.gridYOrigin)
   
-  updateSpriteLocation(item)
+  item:updateSpriteLocation()
 end
 
-function scene:placeInDock(item)
-  
-  
-  
-end
  
 function scene:layoutItem(item)
  if self:isOnGrid(item) then
    self:snapToGrid(item)
+   if item.dockIndex ~= 0 then self.dock:removeFromDock(item) end
  else
+   --item.xGrid = 0
+   --item.yGrid = 0
+   if item.dockIndex == 0 then self.dock:addToDock(item) end
    print "off grid :("
  end
-
-
 end
  
  
 function scene:renderItems()
   for i, v in ipairs(self.items) do  
     if v.xGrid == 0 or v.yGrid == 0 then -- place item in dock   
-      v.xLocation, v.yLocation = self:coordinateLocationForDock()
+      v.x, v.y = offGrid, offGrid -- item is not on grid
     else
-      v.xLocation, v.yLocation = self:coordinatesForGridIndices(v.xGrid, v.yGrid, self.gridXOrigin, self.gridYOrigin)
+      v.x, v.y = self:coordinatesForGridIndices(v.xGrid, v.yGrid, self.gridXOrigin, self.gridYOrigin)
     end
-    
-    v.sprite = director:createRectangle(v.xLocation, v.yLocation, rectSize, rectSize)
+    v.sprite = director:createRectangle(offGrid, offGrid, rectSize, rectSize)
     v.sprite.color = v.color
     v.sprite.zOrder = 1
     
@@ -170,18 +156,22 @@ function scene:renderItems()
         self.sprite.y = event.y + self.sprite.yOffset 
       elseif event.phase == "ended" then
         system:setFocus(nil)
-        self.xLocation = self.sprite.x
-        self.yLocation = self.sprite.y
+        self.x = self.sprite.x
+        self.y = self.sprite.y
         scene:layoutItem(self)
       end
       return true
     end
-    v.sprite:addEventListener("touch", v)  
+    v.sprite:addEventListener("touch", v) 
+    scene:layoutItem(v)
   end
 end
 
 function scene:setUp(event)
   self.levelData = loadLevelJSON(self.levelFileName)
+  
+  
+  
   self.dockIndex = 0 
   self.titleLabel = director:createLabel(20, director.displayHeight - 50, "Play Zis: ".. self.levelData.levelName)
     
@@ -195,7 +185,9 @@ function scene:setUp(event)
   self.backButton:addEventListener("touch", self.backButton)
     
   self.grid, self.gridRect = drawGrid(self.levelData.gridWidth, self.levelData.gridHeight)
-    
+  
+  self.dock = cDock:new({x = 10, y = 40, director.displayWidth - 20, rectSize}, rectSize)
+      
   self.items = loadBlocksAndActions(self.levelData.blocksAndActions) -- Turns JSON level into full-on item objects (basically fleshing out the shit we didn't want to store in JSON)
   
   self:renderItems() 
