@@ -13,7 +13,11 @@ function dock:layoutDock()
   for i, v in ipairs(self.items) do
     v.x = (i - 1) * (self.rectSize + 7) + self.dockRect.x
     v.y = self.dockRect.y
-    v:updateSpriteLocation()
+    if self.tweening then
+      v:updateSpriteLocationWithTween()
+    else
+      v:updateSpriteLocation()
+    end
   end
 end
 
@@ -59,6 +63,7 @@ function dock:init(d, dockRect, rectSize)
   d.dockRect = dockRect
   d.rectSize = rectSize
   d.currentIndex = 0
+  d.tweening = false
 end
 
 return dock

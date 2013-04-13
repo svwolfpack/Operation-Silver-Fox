@@ -164,6 +164,7 @@ function scene:renderItems()
     v.sprite:addEventListener("touch", v) 
     scene:layoutItem(v)
   end
+  self.dock.tweening = true
 end
 
 function scene:setUp(event)

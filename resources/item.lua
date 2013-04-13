@@ -14,6 +14,11 @@ function item:updateSpriteLocation()
   self.sprite.y = self.y
 end
 
+function item:updateSpriteLocationWithTween()
+  tween:to(self.sprite, {x = self.x, y = self.y, easing = ease.powOut, easingValue = 2.5, time = 0.5})
+end
+
+
 function item:new()
   local i = item:create()
   item:init(i)
