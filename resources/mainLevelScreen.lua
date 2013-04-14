@@ -10,7 +10,7 @@ local scene = director:createScene()
 local cItem = dofile("item.lua") 
 local cDock = dofile("dock.lua")
 
-local rectSize = 35 -- we may not need this once we're doing sprites...
+local rectSize = 35
 local offGrid = -100
 
 local function centeringOffset(objectSize, containerSize)
@@ -26,7 +26,19 @@ function scene:loadLevelJSON()
   self.levelData = json.decode(encoded)
 end
 
-function scene:drawGrid()  
+function scene:renderUIElements()
+  self.titleLabel = director:createLabel(20, director.displayHeight - 50, "Play Zis: ".. self.levelData.levelName)    
+  self.backButton =  director:createLabel(10, 10, "zurück")
+  function self.backButton:touch(event)
+    if event.phase == "began" then
+      system:sendEvent("transition", {screen = "level select", transitionType = "slideInL"})
+    end
+    return true
+  end
+  self.backButton:addEventListener("touch", self.backButton)
+end
+
+function scene:renderGrid()  
   local gridWidth = self.levelData.gridWidth -- These are just shorthand convenience vars for readability
   local gridHeight = self.levelData.gridHeight
   local xOffset = centeringOffset(gridWidth * rectSize + gridWidth, director.displayWidth)
@@ -44,6 +56,10 @@ function scene:drawGrid()
   self.gridRect = {x = xOffset, y = yOffset, width = gridWidth * rectSize + gridWidth, height = gridHeight * rectSize + gridHeight}
 end
 
+function scene:setupDock()
+  self.dock = cDock:new({x = 10, y = 40, director.displayWidth - 20, rectSize}, rectSize)   
+end
+
 function scene:loadBlocksAndActions()
   self.items = {}
   for i, v in ipairs(self.levelData.blocksAndActions) do
@@ -51,6 +67,7 @@ function scene:loadBlocksAndActions()
     tempItem.itemType = v.itemType
     tempItem.xGrid = v.xGrid
     tempItem.yGrid = v.yGrid
+    tempItem.rectSize = rectSize
     -- This may be replaced later on if we're not using hard-coded items...
     if tempItem.itemType == "spawner" then
       tempItem.color = {255, 0, 0}
@@ -79,14 +96,10 @@ function scene:gridIndicesForCoordinates(x, y)
   local yGrid = math.floor(y / (rectSize + 1)) + 1
   return xGrid, yGrid
 end
-
-local function centerOfItem(item)
-  return item.x + math.floor(rectSize / 2), item.y + math.floor(rectSize / 2)
-end
  
 function scene:isOnGrid(item)
   local itemCenter = {}
-  itemCenter.x, itemCenter.y = centerOfItem(item)
+  itemCenter.x, itemCenter.y = item:centerOfItem()
   if itemCenter.x >= self.gridRect.x and 
     itemCenter.y >= self.gridRect.y and 
     itemCenter.x <= self.gridRect.x + self.gridRect.width and 
@@ -98,7 +111,7 @@ function scene:isOnGrid(item)
 end
 
 function scene:snapToGrid(item)
-  item.xGrid, item.yGrid = self:gridIndicesForCoordinates(centerOfItem(item))
+  item.xGrid, item.yGrid = self:gridIndicesForCoordinates(item:centerOfItem())
   item.x, item.y = self:coordinatesForGridIndices(item.xGrid, item.yGrid, self.gridXOrigin, self.gridYOrigin)
   item:updateSpriteLocation()
 end
@@ -149,20 +162,9 @@ end
 
 function scene:setUp(event)
   self:loadLevelJSON()
-  
-  self.titleLabel = director:createLabel(20, director.displayHeight - 50, "Play Zis: ".. self.levelData.levelName)    
-  
-  self.backButton =  director:createLabel(10, 10, "zurück")
-  function self.backButton:touch(event)
-    if event.phase == "began" then
-      system:sendEvent("transition", {screen = "level select", transitionType = "slideInL"})
-    end
-    return true
-  end
-  self.backButton:addEventListener("touch", self.backButton)
-  
-  self:drawGrid()
-  self.dock = cDock:new({x = 10, y = 40, director.displayWidth - 20, rectSize}, rectSize)   
+  self:renderUIElements()
+  self:renderGrid()
+  self:setupDock()
   self:loadBlocksAndActions() -- Turns JSON level description into full-on item objects (basically fleshing out the shit we didn't want to store in JSON)
   self:renderItems() 
 end
