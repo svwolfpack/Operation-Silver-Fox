@@ -9,7 +9,6 @@
 local dock = inheritsFrom(baseClass)
 
 function dock:layoutDock()
-  print "laying out dock"
   for i, v in ipairs(self.items) do
     v.x = (i - 1) * (self.rectSize + 7) + self.dockRect.x
     v.y = self.dockRect.y
@@ -25,16 +24,14 @@ function dock:addToDock(item)
   if item.dockIndex == 0 then -- check to make sure we're not adding items twice 
     item.xGrid = 0
     item.yGrid = 0
-   
-   self.currentIndex = self.currentIndex + 1
+    self.currentIndex = self.currentIndex + 1
     item.dockIndex = self.currentIndex
     self.items[self.currentIndex] = item
   end
-  self:layoutDock()
+  self:layoutDock() -- Even if no item was added, we may need to reposition things (i.e. dragged around on the dock without dropping on the grid)
 end
 
 function dock:removeFromDock(item)
-  print "removing from dock"
   if item.dockIndex ~= 0 then -- check to make sure the item actually was in the dock
     local newDock = {}
     local newDockIndex = 0
