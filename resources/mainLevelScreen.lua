@@ -144,8 +144,10 @@ function scene:renderItems()
         self.sprite.yOffset = self.sprite.y - event.y
         self.sprite.zOrder = 2
       elseif event.phase == "moved" then
-        self.sprite.x = event.x + self.sprite.xOffset
-        self.sprite.y = event.y + self.sprite.yOffset 
+        if system:getFocus() == self.sprite then
+          self.sprite.x = event.x + self.sprite.xOffset
+          self.sprite.y = event.y + self.sprite.yOffset 
+        end
       elseif event.phase == "ended" then
         self:stopWiggling()
         system:setFocus(nil)
