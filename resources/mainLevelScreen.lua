@@ -43,14 +43,14 @@ function scene:renderGrid()
   local gridHeight = self.levelData.gridHeight
   local xOffset = centeringOffset(gridWidth * rectSize + gridWidth, director.displayWidth)
   local yOffset = centeringOffset(gridHeight * rectSize + gridHeight, director.displayHeight) 
-  self.gridNode = director:createNode()
+  self.grid = director:createNode()
   for x = 0, gridWidth - 1 do
     for y = 0, gridHeight -1 do
       local rectangle = director:createRectangle(x * (rectSize + 1) + xOffset, y * (rectSize + 1) + yOffset, rectSize, rectSize) -- slightly shrink things so they don't overlap
       if (x%2 == 0 and y%2 == 0) or (x%2 ~= 0 and y%2 ~=0) then -- setup a checkerboard pattern
         rectangle.color = {200, 200, 200}
       end
-      self.gridNode:addChild(rectangle)
+      self.grid:addChild(rectangle)
     end
   end
   self.gridRect = {x = xOffset, y = yOffset, width = gridWidth * rectSize + gridWidth, height = gridHeight * rectSize + gridHeight}

@@ -10,8 +10,8 @@ local dock = inheritsFrom(baseClass)
 
 function dock:layoutDock()
   for i, v in ipairs(self.items) do
-    v.x = (i - 1) * (self.rectSize + 7) + self.dockRect.x + self.rectOffset
-    v.y = self.dockRect.y + self.rectOffset
+    v.x = (i - 1) * (self.spriteSize + self.spacingOffset) + self.dockRect.x + self.spriteOffset
+    v.y = self.dockRect.y + self.spriteOffset
     if self.tweening then
       v:updateSpriteLocationWithTween()
     else
@@ -49,17 +49,18 @@ function dock:removeFromDock(item)
   self:layoutDock()
 end
 
-function dock:new(dockRect, rectSize)
+function dock:new(dockRect, spriteSize)
   local d = dock:create()
-  dock:init(d, dockRect, rectSize)
+  dock:init(d, dockRect, spriteSize)
   return d
 end
 
-function dock:init(d, dockRect, rectSize)
+function dock:init(d, dockRect, spriteSize)
   d.items = {}
   d.dockRect = dockRect
-  d.rectSize = rectSize
-  d.rectOffset = rectSize / 2
+  d.spriteSize = spriteSize
+  d.spriteOffset = spriteSize / 2
+  d.spacingOffset = 7
   d.currentIndex = 0
   d.tweening = false
 end
