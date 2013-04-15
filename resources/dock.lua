@@ -10,8 +10,8 @@ local dock = inheritsFrom(baseClass)
 
 function dock:layoutDock()
   for i, v in ipairs(self.items) do
-    v.x = (i - 1) * (self.rectSize + 7) + self.dockRect.x
-    v.y = self.dockRect.y
+    v.x = (i - 1) * (self.rectSize + 7) + self.dockRect.x + self.rectOffset
+    v.y = self.dockRect.y + self.rectOffset
     if self.tweening then
       v:updateSpriteLocationWithTween()
     else
@@ -59,6 +59,7 @@ function dock:init(d, dockRect, rectSize)
   d.items = {}
   d.dockRect = dockRect
   d.rectSize = rectSize
+  d.rectOffset = rectSize / 2
   d.currentIndex = 0
   d.tweening = false
 end

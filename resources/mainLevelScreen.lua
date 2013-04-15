@@ -84,8 +84,8 @@ end
 function scene:coordinatesForGridIndices(xGrid, yGrid)
   xGrid = xGrid - 1
   yGrid = yGrid - 1
-  local x = xGrid * (rectSize + 1) + self.gridRect.x
-  local y = yGrid * (rectSize + 1) + self.gridRect.y
+  local x = xGrid * (rectSize + 1) + self.gridRect.x + (rectSize / 2)
+  local y = yGrid * (rectSize + 1) + self.gridRect.y + (rectSize / 2)
   return x, y
 end
 
@@ -98,12 +98,10 @@ function scene:gridIndicesForCoordinates(x, y)
 end
  
 function scene:isOnGrid(item)
-  local itemCenter = {}
-  itemCenter.x, itemCenter.y = item:centerOfItem()
-  if itemCenter.x >= self.gridRect.x and 
-    itemCenter.y >= self.gridRect.y and 
-    itemCenter.x <= self.gridRect.x + self.gridRect.width and 
-    itemCenter.y <= self.gridRect.y + self.gridRect.height then
+  if item.x >= self.gridRect.x and 
+    item.y >= self.gridRect.y and 
+    item.x <= self.gridRect.x + self.gridRect.width and 
+    item.y <= self.gridRect.y + self.gridRect.height then
     return true
   else
     return false
@@ -111,7 +109,7 @@ function scene:isOnGrid(item)
 end
 
 function scene:snapToGrid(item)
-  item.xGrid, item.yGrid = self:gridIndicesForCoordinates(item:centerOfItem())
+  item.xGrid, item.yGrid = self:gridIndicesForCoordinates(item.x, item.y)
   item.x, item.y = self:coordinatesForGridIndices(item.xGrid, item.yGrid, self.gridXOrigin, self.gridYOrigin)
   item:updateSpriteLocation()
 end
@@ -135,10 +133,13 @@ function scene:renderItems()
     v.sprite = director:createRectangle(offGrid, offGrid, rectSize, rectSize)
     v.sprite.color = v.color
     v.sprite.zOrder = 1
+    v.sprite.xAnchor = .5
+    v.sprite.yAnchor = .5
     
     function v:touch(event)
      if event.phase == "began" and system:getFocus() == nil then
         system:setFocus(self.sprite)
+        self:startWiggling()
         self.sprite.xOffset = self.sprite.x - event.x
         self.sprite.yOffset = self.sprite.y - event.y
         self.sprite.zOrder = 2
@@ -146,6 +147,7 @@ function scene:renderItems()
         self.sprite.x = event.x + self.sprite.xOffset
         self.sprite.y = event.y + self.sprite.yOffset 
       elseif event.phase == "ended" then
+        self:stopWiggling()
         system:setFocus(nil)
         self.x = self.sprite.x
         self.y = self.sprite.y

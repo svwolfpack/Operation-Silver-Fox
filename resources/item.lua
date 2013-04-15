@@ -8,6 +8,16 @@
 
 local item = inheritsFrom(baseClass)
 
+function item:startWiggling()
+  tween:to(self.sprite, {rotation = -10, time = .1})
+  self.wiggling = tween:to(self.sprite, {rotation = 10, easing = ease.sineInOut, time = .2, mode = "mirror", delay = .1})
+end
+
+function item:stopWiggling()
+  tween:cancel(self.wiggling)
+  tween:to(self.sprite, {rotation = 0, time = .1})
+end
+
 function item:updateSpriteLocation()
   self.sprite.x = self.x
   self.sprite.y = self.y
@@ -15,10 +25,6 @@ end
 
 function item:updateSpriteLocationWithTween()
   tween:to(self.sprite, {x = self.x, y = self.y, easing = ease.powOut, easingValue = 2.5, time = 0.5})
-end
-
-function item:centerOfItem()
-  return self.x + math.floor(self.rectSize / 2), self.y + math.floor(self.rectSize / 2)
 end
 
 function item:new()
@@ -39,6 +45,7 @@ function item:init(i)
   i.dockIndex = 0
   i.color = {0, 0, 0}
   i.movable = true
+  i.wiggling = {}
   i.sprite = {}
 end
 
