@@ -67,11 +67,12 @@ function scene:loadBlocksAndActions()
     tempItem.itemType = v.itemType
     tempItem.xGrid = v.xGrid
     tempItem.yGrid = v.yGrid
-    tempItem.rectSize = rectSize
+    tempItem.spriteSize = rectSize
     -- This may be replaced later on if we're not using hard-coded items...
     if tempItem.itemType == "spawner" then
       tempItem.color = {255, 0, 0}
       tempItem.movable = false
+      --tempItem.
     elseif tempItem.itemType == "note" then
        tempItem.color = {0, 255, 0}
     elseif tempItem.itemType == "directionArrow" then
@@ -123,6 +124,11 @@ function scene:layoutItem(item)
  end
 end
  
+ function scene:layoutItemEvent(event)
+  self:layoutItem(event.item)
+ end
+ 
+ 
 function scene:renderItems()
   for i, v in ipairs(self.items) do  
     if v.xGrid == 0 or v.yGrid == 0 then -- place item in dock   
@@ -130,38 +136,17 @@ function scene:renderItems()
     else
       v.x, v.y = self:coordinatesForGridIndices(v.xGrid, v.yGrid, self.gridXOrigin, self.gridYOrigin)
     end
-    v.sprite = director:createRectangle(offGrid, offGrid, rectSize, rectSize)
+    
+    v:initSprite()
     v.sprite.color = v.color
     v.sprite.zOrder = 1
     v.sprite.xAnchor = .5
     v.sprite.yAnchor = .5
-    
-    function v:touch(event)
-     if event.phase == "began" and system:getFocus() == nil then
-        system:setFocus(self.sprite)
-        self:startWiggling()
-        self.sprite.xOffset = self.sprite.x - event.x
-        self.sprite.yOffset = self.sprite.y - event.y
-        self.sprite.zOrder = 2
-      elseif event.phase == "moved" then
-        if system:getFocus() == self.sprite then
-          self.sprite.x = event.x + self.sprite.xOffset
-          self.sprite.y = event.y + self.sprite.yOffset 
-        end
-      elseif event.phase == "ended" then
-        self:stopWiggling()
-        system:setFocus(nil)
-        self.x = self.sprite.x
-        self.y = self.sprite.y
-        scene:layoutItem(self)
-        self.sprite.zOrder = 1
-      end
-      return true
-    end
-    v.sprite:addEventListener("touch", v) 
+ 
     scene:layoutItem(v)
   end
   self.dock.tweening = true
+  system:addEventListener("layoutItemEvent", self)
 end
 
 function scene:setUp(event)
@@ -178,6 +163,7 @@ function scene:tearDown(event)
   self.backButton = self.backButton:removeFromParent()
   self.grid = self.grid:removeFromParent()
     
+  system:removeEventListener("layoutItemEvent")  
   for i, v in ipairs(self.items) do
     v.sprite = v.sprite:removeFromParent()
   end

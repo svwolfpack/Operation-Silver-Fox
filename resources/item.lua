@@ -27,6 +27,33 @@ function item:updateSpriteLocationWithTween()
   tween:to(self.sprite, {x = self.x, y = self.y, easing = ease.powOut, easingValue = 2.5, time = 0.5})
 end
 
+function item:initSprite()
+  self.sprite = director:createRectangle(self.x, self.y, self.spriteSize, self.spriteSize)
+  function self:touch(event)
+     if event.phase == "began" and system:getFocus() == nil then
+        system:setFocus(self.sprite)
+        self:startWiggling()
+        self.sprite.xOffset = self.sprite.x - event.x
+        self.sprite.yOffset = self.sprite.y - event.y
+        self.sprite.zOrder = 2
+      elseif event.phase == "moved" then
+        if system:getFocus() == self.sprite then
+          self.sprite.x = event.x + self.sprite.xOffset
+          self.sprite.y = event.y + self.sprite.yOffset 
+        end
+      elseif event.phase == "ended" then
+        self:stopWiggling()
+        system:setFocus(nil)
+        self.x = self.sprite.x
+        self.y = self.sprite.y
+        system:sendEvent("layoutItemEvent", {item = self})
+        self.sprite.zOrder = 1
+      end
+      return true
+    end
+    self.sprite:addEventListener("touch", self) 
+end
+
 function item:new()
   local i = item:create()
   item:init(i)
@@ -38,12 +65,13 @@ function item:init(i)
   i.y = 0
   i.xGrid = 0
   i.yGrid = 0
-  i.rectSize = 0
+  i.spriteSize = 0
   i.spriteFileName = "default"
   i.itemType = ""
   i.itemID = 0
   i.dockIndex = 0
   i.color = {0, 0, 0}
+  i.direction = ""
   i.movable = true
   i.wiggling = {}
   i.sprite = {}
