@@ -29,6 +29,12 @@ end
 
 function item:initSprite()
   self.sprite = director:createRectangle(self.x, self.y, self.spriteSize, self.spriteSize)
+  
+  self.sprite.color = self.color
+  self.sprite.zOrder = 1
+  self.sprite.xAnchor = .5
+  self.sprite.yAnchor = .5
+  
   function self:touch(event)
      if event.phase == "began" and system:getFocus() == nil then
         system:setFocus(self.sprite)

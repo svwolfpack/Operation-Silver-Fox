@@ -128,7 +128,6 @@ end
   self:layoutItem(event.item)
  end
  
- 
 function scene:renderItems()
   for i, v in ipairs(self.items) do  
     if v.xGrid == 0 or v.yGrid == 0 then -- place item in dock   
@@ -138,11 +137,6 @@ function scene:renderItems()
     end
     
     v:initSprite()
-    v.sprite.color = v.color
-    v.sprite.zOrder = 1
-    v.sprite.xAnchor = .5
-    v.sprite.yAnchor = .5
- 
     scene:layoutItem(v)
   end
   self.dock.tweening = true
