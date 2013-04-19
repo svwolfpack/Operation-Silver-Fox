@@ -72,11 +72,12 @@ function scene:loadBlocksAndActions()
     if tempItem.itemType == "spawner" then
       tempItem.color = {255, 0, 0}
       tempItem.movable = false
-      --tempItem.
+      tempItem.direction = v.direction
     elseif tempItem.itemType == "note" then
-       tempItem.color = {0, 255, 0}
+      tempItem.color = {0, 255, 0}
     elseif tempItem.itemType == "directionArrow" then
-     tempItem.color = {0, 0, 255}
+      tempItem.color = {0, 0, 255}
+      tempItem.direction = v.direction
     end
     self.items[i] = tempItem
   end

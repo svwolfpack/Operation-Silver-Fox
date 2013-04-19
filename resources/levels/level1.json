@@ -7,26 +7,34 @@
 	"blocksAndActions" : [
 		{
 			"itemType" : "spawner" 
-			 "xGrid" : 5 
+			"xGrid" : 5 
 			"yGrid" : 3 
-			 "data" : {} 
+			"direction" : "right"
 		},
 		{
 			"itemType" : "note"
 			"xGrid" : 0
 			"yGrid" : 0
-			"data" : { 
-				"instrument" : "bass"
-				"note" : "e" 
-			}
+			"instrument" : "bass"
+			"note" : "e" 
 		},
 		{
 			"itemType" : "directionArrow"
 			"xGrid" : 0
 			"yGrid" : 0
-			"data" : { 
-				"direction" : "up"
-			}
+			"direction" : "up"
+		}
+	       	{
+			"itemType" : "directionArrow"
+			"xGrid" : 0
+			"yGrid" : 0
+			"direction" : "down"
+		}
+		{
+			"itemType" : "directionArrow"
+			"xGrid" : 0
+			"yGrid" : 0
+			"direction" : "left"
 		}
 	]
 }

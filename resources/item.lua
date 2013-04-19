@@ -27,10 +27,35 @@ function item:updateSpriteLocationWithTween()
   tween:to(self.sprite, {x = self.x, y = self.y, easing = ease.powOut, easingValue = 2.5, time = 0.5})
 end
 
-function item:initSprite()
+function item:loadSprite() -- This will eventually load the sprite image
   self.sprite = director:createRectangle(self.x, self.y, self.spriteSize, self.spriteSize)
-  
   self.sprite.color = self.color
+  
+  if self.direction ~= "" then
+    local circle = director:createCircle(0, 0, 4)
+    circle.strokeWidth = 0
+    if self.direction == "up" then
+      circle.x = self.spriteSize / 2 - 4
+      circle.y = self.spriteSize - 8
+    elseif self.direction == "down" then
+      circle.x = self.spriteSize / 2 - 4
+      circle.y = 0
+    elseif self.direction == "left" then
+       circle.x = 0
+       circle.y = self.spriteSize / 2 - 4
+    elseif self.direction == "right" then
+      circle.x = self.spriteSize - 8
+      circle.y = self.spriteSize / 2 - 4
+    end
+    self.sprite:addChild(circle) 
+  end
+  
+
+end
+
+function item:initSprite()
+  self:loadSprite()
+  
   self.sprite.zOrder = 1
   self.sprite.xAnchor = .5
   self.sprite.yAnchor = .5
