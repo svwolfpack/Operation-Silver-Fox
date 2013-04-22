@@ -92,8 +92,8 @@ function item:new()
 end
 
 function item:init(i)
-  i.x = 0
-  i.y = 0
+  i.x = -100 -- off grid default coordinates
+  i.y = -100
   i.xGrid = 0
   i.yGrid = 0
   i.spriteSize = 0
