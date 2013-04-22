@@ -16,10 +16,12 @@ function gameEngine:loadBlocksAndActions()
   self.items = {}
   for i, v in ipairs(self.blocksAndActions) do
     local item = cItem:new()
+    item.gameEngine = self
     item.itemType = v.itemType
     item.xGrid = v.xGrid
     item.yGrid = v.yGrid
     item.spriteSize = self.spriteSize
+    item.id = i
     -- This may be replaced later on if we're not using hard-coded items...
     if item.itemType == "spawner" then
       item.color = {255, 0, 0}
@@ -43,19 +45,28 @@ function gameEngine:setupDock()
   self.dock = cDock:new({x = 10, y = 40, director.displayWidth - 20, self.spriteSize}, self.spriteSize)   
 end
 
+function gameEngine:itemIsAloneOnGrid(item)
+  for i, v in ipairs(self.items) do
+    if v ~= item and v.xGrid == item.xGrid and v.yGrid == item.yGrid then
+      return false
+    end
+  end
+  return true
+end
+
 function gameEngine:layoutItem(item)
- if self.grid:isOnGrid(item) then
-   self.grid:snapToGrid(item)
-   self.dock:removeFromDock(item)
+  if self.grid:isOnGrid(item) then
+    self.grid:snapToGrid(item)
+    if self:itemIsAloneOnGrid(item) then
+      self.dock:removeFromDock(item)
+    else
+      self.dock:addToDock(item)
+    end
  else
    self.dock:addToDock(item) 
  end
 end
  
- function gameEngine:layoutItemEvent(event)
-  self:layoutItem(event.item)
- end
-
 function gameEngine:renderItems()
   for i, v in ipairs(self.items) do  
     if v.xGrid ~= 0 and v.yGrid ~= 0 then -- Calculate starting coordinates if not in dock  
@@ -65,8 +76,19 @@ function gameEngine:renderItems()
     self:layoutItem(v)
   end
   self.dock.tweening = true
-  system:addEventListener("layoutItemEvent", self)
 end
+
+function gameEngine:update()
+end
+
+function gameEngine:start()
+  system:addEventListener("update", self)
+end
+
+function gameEngine:stop()
+  system:removeEventListener("update", self)
+end
+
 
 function gameEngine:new(levelData)
   local g = gameEngine:create()

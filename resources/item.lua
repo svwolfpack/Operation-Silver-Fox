@@ -49,8 +49,6 @@ function item:loadSprite() -- This will eventually load the sprite image
     end
     self.sprite:addChild(circle) 
   end
-  
-
 end
 
 function item:initSprite()
@@ -61,7 +59,8 @@ function item:initSprite()
   self.sprite.yAnchor = .5
   
   function self:touch(event)
-     if event.phase == "began" and system:getFocus() == nil then
+     if self.movable == true then
+      if event.phase == "began" and system:getFocus() == nil then
         system:setFocus(self.sprite)
         self:startWiggling()
         self.sprite.xOffset = self.sprite.x - event.x
@@ -77,12 +76,14 @@ function item:initSprite()
         system:setFocus(nil)
         self.x = self.sprite.x
         self.y = self.sprite.y
-        system:sendEvent("layoutItemEvent", {item = self})
+        self.gameEngine:layoutItem(self)
         self.sprite.zOrder = 1
       end
       return true
     end
-    self.sprite:addEventListener("touch", self) 
+    return false
+  end
+  self.sprite:addEventListener("touch", self) 
 end
 
 function item:new()
@@ -99,13 +100,15 @@ function item:init(i)
   i.spriteSize = 0
   i.spriteFileName = "default"
   i.itemType = ""
-  i.itemID = 0
+  i.id = 0
   i.dockIndex = 0
   i.color = {0, 0, 0}
   i.direction = ""
   i.movable = true
+  i.moving = false
   i.wiggling = {}
   i.sprite = {}
+  i.gameEngine = {}
 end
 
 return item

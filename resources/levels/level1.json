@@ -1,39 +1,41 @@
 {
  	"levelName" : "Level Eins",
-	"backgroundImage" : "background1.png"
+	"backgroundImage" : "background1.png",
 	"gridHeight" : 8,
 	"gridWidth" : 8,
 	"tempo" : 100, 
 	"blocksAndActions" : [
 		{
-			"itemType" : "spawner" 
-			"xGrid" : 5 
-			"yGrid" : 3 
-			"direction" : "right"
+			"itemType" : "spawner", 
+			"xGrid" : 5, 
+			"yGrid" : 3, 
+			"direction" : "right",
+			"repeat" : 0,
+			"frequency" : 4
 		},
 		{
-			"itemType" : "note"
-			"xGrid" : 0
-			"yGrid" : 0
-			"instrument" : "bass"
+			"itemType" : "note",
+			"xGrid" : 0,
+			"yGrid" : 0,
+			"instrument" : "bass",
 			"note" : "e" 
 		},
 		{
-			"itemType" : "directionArrow"
-			"xGrid" : 0
-			"yGrid" : 0
+			"itemType" : "directionArrow",
+			"xGrid" : 0,
+			"yGrid" : 0,
 			"direction" : "up"
 		}
 	       	{
-			"itemType" : "directionArrow"
-			"xGrid" : 0
-			"yGrid" : 0
+			"itemType" : "directionArrow",
+			"xGrid" : 0,
+			"yGrid" : 0,
 			"direction" : "down"
 		}
 		{
-			"itemType" : "directionArrow"
-			"xGrid" : 0
-			"yGrid" : 0
+			"itemType" : "directionArrow",
+			"xGrid" : 0,
+			"yGrid" : 0,
 			"direction" : "left"
 		}
 	]

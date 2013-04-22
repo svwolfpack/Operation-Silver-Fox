@@ -29,14 +29,35 @@ end
 
 function scene:renderUIElements()
   self.titleLabel = director:createLabel(20, director.displayHeight - 50, "Play Zis: ".. self.levelData.levelName)    
+  
   self.backButton =  director:createLabel(10, 10, "zurück")
   function self.backButton:touch(event)
-    if event.phase == "began" then
+    if event.phase == "ended" then
       system:sendEvent("transition", {screen = "level select", transitionType = "slideInL"})
     end
     return true
   end
   self.backButton:addEventListener("touch", self.backButton)
+  
+  self.startStopButton =  director:createLabel(215, 10)
+  self.startStopButton.scene = self
+  self.startStopButton.startText = "starten"
+  self.startStopButton.stopText = "stoppen"
+  self.startStopButton.text = self.startStopButton.startText
+  function self.startStopButton:touch(event)
+    if event.phase == "ended" then
+      if self.text == self.startText then
+        self.text = self.stopText
+        self.scene.gameEngine:start()
+      else
+        self.text = self.startText
+        self.scene.gameEngine:stop()
+      end
+    end
+    return true
+  end
+  self.startStopButton:addEventListener("touch", self.startStopButton)
+  
 end
 
 function scene:setupGameEngine()

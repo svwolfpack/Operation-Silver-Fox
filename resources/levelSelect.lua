@@ -20,7 +20,7 @@ function scene:setUp(event)
   self.backButton =  director:createLabel(10, 10, "zurück")
   
   function self.backButton:touch(event)
-    if event.phase == "began" then
+    if event.phase == "ended" then
       system:sendEvent("transition", { screen = "home", transitionType = "slideInL"})
     end
   end
@@ -31,7 +31,7 @@ function scene:setUp(event)
   for index,level in ipairs(loadLevelList()) do --indexed pair iterator, so it returns the values in the table/array in order
     local tempButton = director:createLabel(100, director.displayHeight - 100 - (index * 30), level.name)
     function tempButton:touch(event)
-      if event.phase == "began" then
+      if event.phase == "ended" then
         system:sendEvent("transition", { screen = "main level screen", transitionType = "slideInR", levelFileName = level.fileName})
       end
     end  

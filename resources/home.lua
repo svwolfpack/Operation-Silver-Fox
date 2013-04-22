@@ -14,7 +14,7 @@ function scene:setUp(event)
   self.playButton = director:createLabel(100, director.displayHeight - 200, "Spiel!")
       
   function self.playButton:touch(event)
-    if event.phase == "began" then
+    if event.phase == "ended" then
       system:sendEvent("transition", { screen = "level select", transitionType = "slideInR"})
     end
   end  
