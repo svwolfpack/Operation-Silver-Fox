@@ -10,36 +10,33 @@ local gameEngine = inheritsFrom(baseClass)
 
 local cGrid = dofile("grid.lua")
 local cItem = dofile("item.lua") 
+local cActionDirection = dofile("actionDirection.lua")
+local cActionSpawner = dofile("actionSpawner.lua")
 local cBlock = dofile("block.lua")
 local cDock = dofile("dock.lua") 
 local cMutableSet = dofile("mutableSet.lua")
 
 function gameEngine:loadActions()
   self.items = {}
-  for i, v in ipairs(self.rawActions) do
-    local item = cItem:new()
-    item.gameEngine = self
-    item.itemType = v.itemType
-    item.xGrid = v.xGrid
-    item.yGrid = v.yGrid
-    item.spriteSize = self.spriteSize
-    item.id = i
-    -- This may be replaced later on if we're not using hard-coded items...
-    if item.itemType == "spawner" then
-      item.color = {255, 0, 0}
-      item.movable = false
-      item.direction = v.direction
-      item.repeating = v.repeating
-      item.frequency = v.frequency
-      item.speed = v.speed
-      item.blocksSpawned = 0
-    elseif item.itemType == "note" then
-      item.color = {0, 255, 0}
-    elseif item.itemType == "directionArrow" then
-      item.color = {0, 0, 255}
-      item.direction = v.direction
+  for i, itemJSONData in ipairs(self.rawActions) do
+    itemJSONData.spriteSize = self.spriteSize
+    itemJSONData.gameEngine = self
+    itemJSONData.id = i
+    local item 
+    if itemJSONData.itemType == "spawner" then
+      itemJSONData.color = {255, 0, 0}
+      itemJSONData.movable = false
+      itemJSONData.blocksSpawned = 0
+      item = cActionSpawner:new(itemJSONData)
+    elseif itemJSONData.itemType == "note" then
+      itemJSONData.color = {0, 255, 0}
+      item = cItem:new(itemJSONData)
+      
+    elseif itemJSONData.itemType == "directionArrow" then
+      itemJSONData.color = {0, 0, 255}
+      item = cActionDirection:new(itemJSONData)
     end
-    self.items[i] = item
+    table.insert(self.items, item)
   end
 end
 
@@ -52,7 +49,7 @@ function gameEngine:setupDock()
 end
 
 function gameEngine:itemIsAloneOnGrid(item)
-  for i, v in ipairs(self.items) do
+  for _, v in ipairs(self.items) do
     if v ~= item and v.xGrid == item.xGrid and v.yGrid == item.yGrid then
       return false
     end
@@ -74,11 +71,10 @@ function gameEngine:layoutItem(item)
 end
  
 function gameEngine:renderItems()
-  for i, v in ipairs(self.items) do  
+  for _, v in ipairs(self.items) do  
     if v.xGrid ~= 0 and v.yGrid ~= 0 then -- Calculate starting coordinates if not in dock  
       v.x, v.y = self.grid:coordinatesForGridIndices(v.xGrid, v.yGrid)
     end
-    v:initSprite()
     self:layoutItem(v)
   end
   self.dock.tweening = true
@@ -101,7 +97,7 @@ function gameEngine:shouldRemoveBlock(block)
 end
 
 function gameEngine:destroyAllBlocks()
-   for i, v in ipairs(self.blocks.objects) do
+   for _, v in ipairs(self.blocks.objects) do
     v.sprite = v.sprite:removeFromParent()
   end
   return cMutableSet:new()
@@ -125,9 +121,8 @@ end
 
 function gameEngine:update(event)
   if self.engineRunning == true then
-
     local blocksToRemove = cMutableSet:new()
-    for k, v in pairs(self.blocks.objects) do
+    for _, v in pairs(self.blocks.objects) do
       self:moveBlock(v, system.deltaTime)
       if self:shouldRemoveBlock(v) == true then
         v.sprite = v.sprite:removeFromParent()
@@ -139,66 +134,49 @@ function gameEngine:update(event)
 end
 
 function gameEngine:spawnBlock(spawner)
-  local newBlock = cBlock:new(self.spriteSize)
-       newBlock.x = spawner.x 
-       newBlock.y = spawner.y
-       newBlock.direction = spawner.direction
-       newBlock.speed = self:blockSpeed(spawner)
-       newBlock:updateSpriteLocation()
-       spawner.blocksSpawned = spawner.blocksSpawned + 1
-       self.blocks:add(newBlock)  
+ spawner.blocksSpawned = spawner.blocksSpawned + 1 
+ local blockData = {}
+  blockData.color = {255, 255, 0}
+  blockData.alpha = 0.6
+  blockData.spriteSize = self.spriteSize
+  blockData.x = spawner.x 
+  blockData.y = spawner.y
+  blockData.speed = self:blockSpeed(spawner)
+  blockData.direction = spawner.direction
+  local newBlock = cBlock:new(blockData)
+  self.blocks:add(newBlock) 
 end
 
-
 function gameEngine:snapBlocksToGrid()
-  for k, v in pairs(self.blocks.objects) do
+  for _, v in pairs(self.blocks.objects) do
     self.grid:snapToGrid(v)
   end
 end
 
 
 function gameEngine:timer(event)
- for k, v in pairs(self.items) do
+ for _, v in pairs(self.items) do
     if v.itemType == "spawner" and self:shouldSpawn(v, event.doneIterations) then
        self:spawnBlock(v)
     end    
   end
  
-  
-  self:snapBlocksToGrid()
-  
-  --for k, v in pairs(self.blocks.objects) do
-  --v:updateSpriteLocation()
-  --end
-  
-  
-  
-  
+  self:snapBlocksToGrid()  
 end
   
-  
-
-
 function gameEngine:setRunning(state)
-  for k, v in pairs(self.items) do
+  for _, v in pairs(self.items) do
     v.engineRunning = state  
   end
   self.engineRunning = state
 end
 
 function gameEngine:start()
-  
   self:setRunning(true)
   self.beatTimer = system:addTimer(self, self.secondsPerBeat)
-  
-  
-  
-  
-  
 end
 
 function gameEngine:stop()
-  --system:removeEventListener("update", self)
   self.beatTimer:cancel()
   self.beatTimer = {}
   self.blocks = self:destroyAllBlocks()
@@ -240,7 +218,7 @@ function gameEngine:unload()
     self.beatTimer:cancel()
   end
       
-  for i, v in ipairs(self.items) do
+  for _, v in ipairs(self.items) do
     v.sprite = v.sprite:removeFromParent()
   end
   self.items = nil

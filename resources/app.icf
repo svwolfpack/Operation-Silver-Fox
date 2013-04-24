@@ -5,3 +5,6 @@
 # Add any settings here
 
 [QUICK]
+
+[UTIL]
+MemMgrMaxAllocWarning=0

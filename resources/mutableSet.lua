@@ -3,7 +3,7 @@
 	v0.1
 	4/22/2012
 	
-	Mustable Set
+	Mutable Set
 --]]
 
 local mutableSet = inheritsFrom(baseClass)

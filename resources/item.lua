@@ -30,86 +30,36 @@ end
 function item:loadSprite() -- This will eventually load the sprite image
   self.sprite = director:createRectangle(self.x, self.y, self.spriteSize, self.spriteSize)
   self.sprite.color = self.color
-  
-  if self.direction ~= "" then
-    local circle = director:createCircle(0, 0, 4)
-    circle.strokeWidth = 0
-    if self.direction == "up" then
-      circle.x = self.spriteSize / 2 - 4
-      circle.y = self.spriteSize - 8
-    elseif self.direction == "down" then
-      circle.x = self.spriteSize / 2 - 4
-      circle.y = 0
-    elseif self.direction == "left" then
-       circle.x = 0
-       circle.y = self.spriteSize / 2 - 4
-    elseif self.direction == "right" then
-      circle.x = self.spriteSize - 8
-      circle.y = self.spriteSize / 2 - 4
-    end
-    self.sprite:addChild(circle) 
-  end
-end
-
-function item:initSprite()
-  self:loadSprite()
-  
+  self.sprite.alpha = self.alpha
   self.sprite.zOrder = 1
   self.sprite.xAnchor = .5
   self.sprite.yAnchor = .5
-  
-  function self:touch(event)
-     if self.movable == true and self.engineRunning == false then
-      if event.phase == "began" and system:getFocus() == nil then
-        system:setFocus(self.sprite)
-        self:startWiggling()
-        self.sprite.xOffset = self.sprite.x - event.x
-        self.sprite.yOffset = self.sprite.y - event.y
-        self.sprite.zOrder = 2
-      elseif event.phase == "moved" then
-        if system:getFocus() == self.sprite then
-          self.sprite.x = event.x + self.sprite.xOffset
-          self.sprite.y = event.y + self.sprite.yOffset 
-        end
-      elseif event.phase == "ended" then
-        self:stopWiggling()
-        system:setFocus(nil)
-        self.x = self.sprite.x
-        self.y = self.sprite.y
-        self.gameEngine:layoutItem(self)
-        self.sprite.zOrder = 1
-      end
-      return true
-    end
-    return false
-  end
-  self.sprite:addEventListener("touch", self) 
 end
 
-function item:new()
+function item:new(itemData)
   local i = item:create()
-  item:init(i)
+  item:init(i, itemData)
   return i
 end
 
-function item:init(i)
-  i.x = -100 -- off grid default coordinates
-  i.y = -100
-  i.xGrid = 0
-  i.yGrid = 0
-  i.spriteSize = 0
-  i.spriteFileName = "default"
-  i.itemType = ""
-  i.id = 0
-  i.dockIndex = 0
-  i.color = {0, 0, 0}
-  i.direction = ""
-  i.movable = true
-  i.engineRunning = false
-  i.moving = false
-  i.wiggling = {}
-  i.sprite = {}
-  i.gameEngine = {}
+function item:init(i, itemData)
+  i.x = itemData.x or -100 -- off grid default coordinates
+  i.y = itemData.y or -100
+  i.xGrid = itemData.xGrid or 0
+  i.yGrid = itemData.yGrid or 0
+  i.spriteSize = itemData.spriteSize or 0
+  i.spriteFileName = itemData.spriteFileName or "default"
+  i.itemType =itemData.itemType or ""
+  i.id = itemData.id or 0
+  i.dockIndex = itemData.dockIndex or 0
+  i.color = itemData.color or {0, 0, 0}
+  i.alpha = itemData.alpha or 1.0
+  i.moving = itemData.moving or false
+  i.movable = itemData.movable or false
+  i.direction = itemData.direction or ""
+  i.sprite = itemData.sprite or {}
+  i.engineRunning = itemData.engineRunning or false
+  item.loadSprite(i)
 end
 
 return item
