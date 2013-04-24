@@ -40,18 +40,18 @@ function scene:renderUIElements()
   self.backButton:addEventListener("touch", self.backButton)
   
   self.startStopButton =  director:createLabel(215, 10)
-  self.startStopButton.scene = self
   self.startStopButton.startText = "starten"
   self.startStopButton.stopText = "stoppen"
   self.startStopButton.text = self.startStopButton.startText
+  local scene = self
   function self.startStopButton:touch(event)
     if event.phase == "ended" then
       if self.text == self.startText then
         self.text = self.stopText
-        self.scene.gameEngine:start()
+        scene.gameEngine:start()
       else
         self.text = self.startText
-        self.scene.gameEngine:stop()
+        scene.gameEngine:stop()
       end
     end
     return true
@@ -73,7 +73,8 @@ end
 function scene:tearDown(event)  
   self.titleLabel = self.titleLabel:removeFromParent() -- remove from the scene graph, and set self.label to nil
   self.backButton = self.backButton:removeFromParent()
-  self.gameEngine:unload()
+  self.startStopButton = self.startStopButton:removeFromParent()
+  self.gameEngine = self.gameEngine:unload()
 end
 
 scene:addEventListener({"setUp", "tearDown"}, scene)

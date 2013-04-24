@@ -59,7 +59,7 @@ function item:initSprite()
   self.sprite.yAnchor = .5
   
   function self:touch(event)
-     if self.movable == true then
+     if self.movable == true and self.engineRunning == false then
       if event.phase == "began" and system:getFocus() == nil then
         system:setFocus(self.sprite)
         self:startWiggling()
@@ -105,6 +105,7 @@ function item:init(i)
   i.color = {0, 0, 0}
   i.direction = ""
   i.movable = true
+  i.engineRunning = false
   i.moving = false
   i.wiggling = {}
   i.sprite = {}

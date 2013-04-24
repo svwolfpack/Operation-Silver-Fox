@@ -24,7 +24,19 @@ function grid:gridIndicesForCoordinates(x, y)
   return xGrid, yGrid
 end
 
-function grid:isOnGrid(item)
+function grid:anyPartIsOnGrid(item)
+ local offset = (item.spriteSize / 2)
+ if item.x + offset >= self.gridRect.x and 
+    item.y + offset >= self.gridRect.y and 
+    item.x - offset <= self.gridRect.x + self.gridRect.width and 
+    item.y - offset <= self.gridRect.y + self.gridRect.height then
+    return true
+  else
+    return false
+  end 
+end
+
+function grid:centerIsOnGrid(item)
   if item.x >= self.gridRect.x and 
     item.y >= self.gridRect.y and 
     item.x <= self.gridRect.x + self.gridRect.width and 
