@@ -84,13 +84,7 @@ function gameEngine:blockSpeed(spawner)
   return spawner.speed * (self.spriteSize / self.secondsPerBeat) 
 end
 
-function gameEngine:shouldSpawn(spawner, beat)
-  if (spawner.repeating == 0 or spawner.blocksSpawned < spawner.repeating) and (beat - 1) % spawner.frequency == 0 then 
-    return true
-  else
-    return false
-  end
-end
+
 
 function gameEngine:shouldRemoveBlock(block)
   return not self.grid:anyPartIsOnGrid(block)
@@ -119,17 +113,9 @@ function gameEngine:moveBlock(block, elapsedTime)
   end
 end
 
-function gameEngine:update(event)
-  if self.engineRunning == true then
-    local blocksToRemove = cMutableSet:new()
-    for _, v in pairs(self.blocks.objects) do
-      self:moveBlock(v, system.deltaTime)
-      if self:shouldRemoveBlock(v) == true then
-        v.sprite = v.sprite:removeFromParent()
-        blocksToRemove:add(v)
-      end
-    end  
-    self.blocks:removeSet(blocksToRemove)
+function gameEngine:snapBlocksToGrid()
+  for _, v in pairs(self.blocks.objects) do
+    self.grid:snapToGrid(v)
   end
 end
 
@@ -147,21 +133,47 @@ function gameEngine:spawnBlock(spawner)
   self.blocks:add(newBlock) 
 end
 
-function gameEngine:snapBlocksToGrid()
-  for _, v in pairs(self.blocks.objects) do
-    self.grid:snapToGrid(v)
+function gameEngine:shouldSpawn(spawner)
+  if (spawner.repeating == 0 or spawner.blocksSpawned < spawner.repeating) and (self.beatCount - 1) % spawner.frequency == 0 then 
+    return true
+  else
+    return false
   end
 end
 
-
-function gameEngine:timer(event)
- for _, v in pairs(self.items) do
-    if v.itemType == "spawner" and self:shouldSpawn(v, event.doneIterations) then
+function gameEngine:beat()
+   for _, v in pairs(self.items) do
+    if v.itemType == "spawner" and self:shouldSpawn(v) then
        self:spawnBlock(v)
     end    
   end
+  self.beatCount = self.beatCount + 1
+  self:snapBlocksToGrid() 
+end
+
+function gameEngine:update(event)
+  if self.engineRunning == true then
+    
+    self.elapsedBeatTime = self.elapsedBeatTime + system.deltaTime
+    if self.elapsedBeatTime >= self.secondsPerBeat then
+      self:beat()
+      self.elapsedBeatTime = 0
+    end
+        
+    local blocksToRemove = cMutableSet:new()
+    for _, v in pairs(self.blocks.objects) do
+      self:moveBlock(v, system.deltaTime)
+      if self:shouldRemoveBlock(v) == true then
+        v.sprite = v.sprite:removeFromParent()
+        blocksToRemove:add(v)
+      end
+    end  
+    self.blocks:removeSet(blocksToRemove)
+  end
+end
+
+function gameEngine:timer(event)
  
-  self:snapBlocksToGrid()  
 end
   
 function gameEngine:setRunning(state)
@@ -172,15 +184,14 @@ function gameEngine:setRunning(state)
 end
 
 function gameEngine:start()
+  self.beatCount = 0
+  self:beat() -- Initial beat, otherwise update won't catch it until the 2nd beat
   self:setRunning(true)
-  self.beatTimer = system:addTimer(self, self.secondsPerBeat)
 end
 
 function gameEngine:stop()
-  self.beatTimer:cancel()
-  self.beatTimer = {}
-  self.blocks = self:destroyAllBlocks()
   self:setRunning(false)
+  self.blocks = self:destroyAllBlocks()
 end
 
 
@@ -201,7 +212,8 @@ function gameEngine:init(g, levelData)
   g.blocks = cMutableSet:new()
   g.tempo = levelData.tempo
   g.secondsPerBeat = 60 / g.tempo
-  g.beatTimer = {}
+  g.elapsedBeatTime = 0
+  g.beatCount = 1
   g.engineRunning = false
   system:addEventListener("update", g)
   
@@ -214,10 +226,7 @@ end
 function gameEngine:unload()
   self.grid.gridNode = self.grid.gridNode:removeFromParent()
   self.grid = nil
-  if next(self.beatTimer) ~= nil then
-    self.beatTimer:cancel()
-  end
-      
+        
   for _, v in ipairs(self.items) do
     v.sprite = v.sprite:removeFromParent()
   end
