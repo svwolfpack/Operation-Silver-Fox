@@ -15,9 +15,9 @@ function actionNote:new(itemJSONData)
   return a
 end
 
-function actionNote:init(a, itemJSONData)
-  cTouchItem:init(a, itemJSONData)
-  dbg.printTable(a)
+function actionNote:init(a, itemData)
+  itemData.color = {0, 255, 0}
+  cTouchItem:init(a, itemData)
  
 end
 

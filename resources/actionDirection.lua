@@ -37,6 +37,7 @@ function actionDirection:new(itemData)
 end
 
 function actionDirection:init(a, itemData)
+  itemData.color = {0, 0, 255}
   cTouchItem:init(a, itemData)
   actionDirection.addDotsToSprite(a)
  
