@@ -23,7 +23,7 @@ function block:init(b, blockData)
   blockData.color = {255, 255, 0}
   blockData.alpha = 0.6
   cItem:init(b, blockData)
-  b.speed = blockData.speed or 0
+  b.speed = blockData.speed or 0  
 end
 
 return block

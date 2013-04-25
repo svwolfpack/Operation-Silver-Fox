@@ -8,6 +8,10 @@
 
 local item = inheritsFrom(baseClass)
 
+function item:centerCollisionWithItem(item)
+
+end
+
 function item:startWiggling()
   tween:to(self.sprite, {rotation = -10, time = .1})
   self.wiggling = tween:to(self.sprite, {rotation = 10, easing = ease.sineInOut, time = .2, mode = "mirror", delay = .1})

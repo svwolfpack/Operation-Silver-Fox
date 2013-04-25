@@ -57,6 +57,7 @@ end
 function touchItem:init(i, itemJSONData)
   cItem:init(i, itemJSONData)
   i.gameEngine = itemJSONData.gameEngine or {}
+  touchItem.setupTouchForItem(i)
   i.movable = true
   i.wiggling = {}
 end

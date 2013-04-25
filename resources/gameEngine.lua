@@ -9,7 +9,6 @@
 local gameEngine = inheritsFrom(baseClass)
 
 local cGrid = dofile("grid.lua")
---local cItem = dofile("item.lua") 
 local cActionDirection = dofile("actionDirection.lua")
 local cActionNote = dofile("actionNote.lua")
 local cActionSpawner = dofile("actionSpawner.lua")
@@ -65,7 +64,7 @@ function gameEngine:layoutItem(item)
  end
 end
  
-function gameEngine:renderItems()
+function gameEngine:renderActions()
   for _, v in ipairs(self.items) do  
     if v.xGrid ~= 0 and v.yGrid ~= 0 then -- Calculate starting coordinates if not in dock  
       v.x, v.y = self.grid:coordinatesForGridIndices(v.xGrid, v.yGrid)
@@ -120,6 +119,7 @@ function gameEngine:spawnBlock(spawner)
   blockData.y = spawner.y
   blockData.speed = self:blockSpeed(spawner)
   blockData.direction = spawner.direction
+  blockData.gameEngine = self
   local newBlock = cBlock:new(blockData)
   self.blocks:add(newBlock) 
 end
@@ -157,9 +157,28 @@ function gameEngine:moveBlocksThatShouldBeMoved()
   end
 end
 
+function gameEngine:itemsDidCenterCollide(item1, item2)
+  if item1.xGrid == item2.xGrid and item1.yGrid == item2.yGrid then
+    return true
+  else
+    return false
+  end
+end
+
+function gameEngine:resolveCollisions()
+  for _, action in pairs(self.items) do
+    for _, block in pairs(self.blocks.objects) do
+      if self:itemsDidCenterCollide(action, block) then
+        action:centerCollisionWithItem(block)
+      end
+    end
+  end
+end
+
 function gameEngine:beat()
   self:spawnBlocksThatShouldBeSpawned()
   self:snapBlocksToGrid() 
+  self:resolveCollisions()
   self:removeBlocksThatShouldBeRemoved()
   self:moveBlocksThatShouldBeMoved()
   
@@ -168,14 +187,13 @@ end
 
 function gameEngine:update(event)
   if self.engineRunning == true then
-    
     self.elapsedBeatTime = self.elapsedBeatTime + system.deltaTime
     if self.elapsedBeatTime >= self.secondsPerBeat then
       self:beat()
       self.elapsedBeatTime = 0
-    end
-        
-    
+   elseif self.elapsedBeatTime >= self.secondsPerBeat / 2 then
+      self:snapBlocksToGrid()
+   end
   end
 end
   
@@ -195,6 +213,10 @@ end
 function gameEngine:stop()
   self:setRunning(false)
   self.blocks = self:removeAllBlocks()
+  for _, v in pairs(self.items) do
+    if v.itemType == "spawner" then v.blocksSpawned = 0 end
+  end
+  
 end
 
 function gameEngine:new(levelData)
@@ -222,7 +244,7 @@ function gameEngine:init(g, levelData)
   g:setupGrid()
   g:setupDock()
   g:loadActions()
-  g:renderItems()
+  g:renderActions()
 end
 
 function gameEngine:unload()
@@ -234,7 +256,7 @@ function gameEngine:unload()
   end
   self.items = nil
  
-  self:destroyAllBlocks()
+  self:removeAllBlocks()
   self.blocks = nil
   
   return nil

@@ -9,6 +9,10 @@
 local cTouchItem = dofile("touchItem.lua")
 local actionDirection = inheritsFrom(cTouchItem)
 
+function actionDirection:centerCollisionWithItem(item)
+  item.direction = self.direction
+end
+
 function actionDirection:addDotsToSprite() -- Eventually we won't need this
   if self.direction then
     local circle = director:createCircle(0, 0, 4)
@@ -40,7 +44,6 @@ function actionDirection:init(a, itemData)
   itemData.color = {0, 0, 255}
   cTouchItem:init(a, itemData)
   actionDirection.addDotsToSprite(a)
- 
 end
 
 return actionDirection
