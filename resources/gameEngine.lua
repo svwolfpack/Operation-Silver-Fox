@@ -15,6 +15,7 @@ local cActionSpawner = dofile("actionSpawner.lua")
 local cBlock = dofile("block.lua")
 local cDock = dofile("dock.lua") 
 local cMutableSet = dofile("mutableSet.lua")
+local cBlockMutableSet = dofile("blockMutableSet.lua")
 
 function gameEngine:loadActions()
   self.items = {}
@@ -78,15 +79,11 @@ function gameEngine:blockSpeed(spawner)
   return spawner.speed * (self.spriteSize / self.secondsPerBeat) 
 end
 
-function gameEngine:shouldRemoveBlock(block)
-  return not self.grid:anyPartIsOnGrid(block)
-end
-
 function gameEngine:removeAllBlocks()
-   for _, v in ipairs(self.blocks.objects) do
+   for _, v in pairs(self.blocks.objects) do
     v.sprite = v.sprite:removeFromParent()
   end
-  return cMutableSet:new()
+  return cBlockMutableSet:new()
 end
 
 function gameEngine:tweenBlock(block)
@@ -140,20 +137,19 @@ function gameEngine:spawnBlocksThatShouldBeSpawned()
   end
 end
 
-function gameEngine:removeBlocksThatShouldBeRemoved()
+function gameEngine:removeOffGridBlocks()
   local blocksToRemove = cMutableSet:new()
-  for _, v in pairs(self.blocks.objects) do
-    if self:shouldRemoveBlock(v) == true then
-      v.sprite = v.sprite:removeFromParent()
-      blocksToRemove:add(v)
+  for _, block in pairs(self.blocks.objects) do
+    if not self.grid:anyPartIsOnGrid(block) then
+      blocksToRemove:add(block)
     end
   end  
   self.blocks:removeSet(blocksToRemove)
 end
 
 function gameEngine:moveBlocksThatShouldBeMoved()
-  for _, v in pairs(self.blocks.objects) do
-    self:tweenBlock(v)
+  for _, block in pairs(self.blocks.objects) do
+    self:tweenBlock(block)
   end
 end
 
@@ -165,24 +161,72 @@ function gameEngine:itemsDidCenterCollide(item1, item2)
   end
 end
 
-function gameEngine:resolveCollisions()
-  for _, action in pairs(self.items) do
-    for _, block in pairs(self.blocks.objects) do
-      if self:itemsDidCenterCollide(action, block) then
-        action:centerCollisionWithItem(block)
-      end
+function gameEngine:indexForItem(item)
+  return item.xGrid + ((item.yGrid - 1) * self.gridWidth)
+end
+
+function gameEngine:updateActionsByLocationTable()
+  -- index in the table is calculated from xgrid and ygrid: xGrid + (yGrid * gridWidth)
+  self.actionsByLocation = {}
+  for _, v in pairs(self.items) do
+    if self.grid:centerIsOnGrid(v) then
+      self.actionsByLocation[self:indexForItem(v)] = v
     end
   end
+end
+
+function gameEngine:updateBlocksByLocationTable()
+  self.blocksByLocation = {}
+  for _, v in pairs(self.blocks.objects) do
+    local index = self:indexForItem(v)
+    if not self.blocksByLocation[index] then
+      self.blocksByLocation[index] = cMutableSet:new()
+    end
+    self.blocksByLocation[index]:add(v)
+  end
+end
+
+function gameEngine:resolveBlockCollisions()
+  self:updateBlocksByLocationTable()
+  local blocksToRemove = cMutableSet:new()
+  for _, blocksInLocation in pairs(self.blocksByLocation) do
+    if #blocksInLocation.objects > 1 then
+      for _, block in pairs(blocksInLocation.objects) do
+        blocksToRemove:add(block)
+      end
+    end
+  end  
+  self.blocks:removeSet(blocksToRemove)
+end
+
+function gameEngine:resolveActionCollisions()
+  for _, block in pairs(self.blocks.objects) do
+    local action = self.actionsByLocation[self:indexForItem(block)] or nil
+    if action and self:itemsDidCenterCollide(action, block) then
+      action:centerCollisionWithItem(block)
+    end
+  end
+end
+
+function gameEngine:resolveCollisions()
+  self:resolveBlockCollisions()
+  self:resolveActionCollisions()
 end
 
 function gameEngine:beat()
   self:spawnBlocksThatShouldBeSpawned()
   self:snapBlocksToGrid() 
   self:resolveCollisions()
-  self:removeBlocksThatShouldBeRemoved()
+  self:removeOffGridBlocks()
   self:moveBlocksThatShouldBeMoved()
   
   self.beatCount = self.beatCount + 1
+end
+
+function gameEngine:resetSpawners()
+  for _, v in pairs(self.items) do
+    if v.itemType == "spawner" then v.blocksSpawned = 0 end
+  end
 end
 
 function gameEngine:update(event)
@@ -196,7 +240,7 @@ function gameEngine:update(event)
    end
   end
 end
-  
+   
 function gameEngine:setRunning(state)
   for _, v in pairs(self.items) do
     v.engineRunning = state  
@@ -206,6 +250,7 @@ end
 
 function gameEngine:start()
   self.beatCount = 0
+  self:updateActionsByLocationTable()
   self:beat() -- Initial beat, otherwise update won't catch it until the 2nd beat
   self:setRunning(true)
 end
@@ -213,10 +258,7 @@ end
 function gameEngine:stop()
   self:setRunning(false)
   self.blocks = self:removeAllBlocks()
-  for _, v in pairs(self.items) do
-    if v.itemType == "spawner" then v.blocksSpawned = 0 end
-  end
-  
+  self:resetSpawners()  
 end
 
 function gameEngine:new(levelData)
@@ -233,7 +275,9 @@ function gameEngine:init(g, levelData)
   g.spriteSize = levelData.spriteSize
   g.rawActions = levelData.actions
   g.items = {}
-  g.blocks = cMutableSet:new()
+  g.actionsByLocation = {}
+  g.blocks = cBlockMutableSet:new()
+  g.blocksByLocation = {}
   g.tempo = levelData.tempo
   g.secondsPerBeat = 60 / g.tempo
   g.elapsedBeatTime = 0
