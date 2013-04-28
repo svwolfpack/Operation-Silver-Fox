@@ -25,7 +25,7 @@ function block:removeSprite()
 end
 
 function block:updateSpriteLocationWithTween(time)
-  tween:to(self.sprite, {x = self.x, y = self.y, easing = ease.expOut, easingValue = 2.5, time = time})
+  tween:to(self.sprite, {x = self.x, y = self.y, easing = ease.expIn, easingValue = 2.5, time = time})
 end
 
 function block:new(blockData)

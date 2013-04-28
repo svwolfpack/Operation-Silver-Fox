@@ -10,7 +10,7 @@
 			"xGrid" : 1, 
 			"yGrid" : 3, 
 			"direction" : "right",
-			"repeating" : 1,
+			"repeating" : 0,
 			"frequency" : 3,
 			"speed" : 1
 		},
@@ -19,7 +19,21 @@
 			"xGrid" : 0,
 			"yGrid" : 0,
 			"instrument" : "bass",
-			"note" : "A2"
+			"note" : "E3"
+		},
+{
+			"itemType" : "note",
+			"xGrid" : 0,
+			"yGrid" : 0,
+			"instrument" : "bass",
+			"note" : "D3"
+		},
+{
+			"itemType" : "note",
+			"xGrid" : 0,
+			"yGrid" : 0,
+			"instrument" : "bass",
+			"note" : "C3"
 		},
 		{
 			"itemType" : "directionArrow",

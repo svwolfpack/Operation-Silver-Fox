@@ -10,8 +10,6 @@ local cTouchItem = dofile("touchItem.lua")
 local actionNote = inheritsFrom(cTouchItem)
 
 function actionNote:centerCollisionWithItem(item)
-  print "bing bong!"
-  
   audio:playSound(self.fileName)
 end
 
