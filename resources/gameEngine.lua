@@ -179,6 +179,7 @@ function gameEngine:updateBlocksByLocationTable()
   self.blocksByLocation = {}
   for _, v in pairs(self.blocks.objects) do
     local index = self:indexForItem(v)
+    if index < 1 or index >= self.offGridIndex then index = self.offGridIndex end
     if not self.blocksByLocation[index] then
       self.blocksByLocation[index] = cMutableSet:new()
     end
@@ -189,8 +190,8 @@ end
 function gameEngine:resolveBlockCollisions()
   self:updateBlocksByLocationTable()
   local blocksToRemove = cMutableSet:new()
-  for _, blocksInLocation in pairs(self.blocksByLocation) do
-    if #blocksInLocation.objects > 1 then
+  for index, blocksInLocation in pairs(self.blocksByLocation) do
+    if #blocksInLocation.objects > 1 or index == self.offGridIndex then
       for _, block in pairs(blocksInLocation.objects) do
         blocksToRemove:add(block)
       end
@@ -217,7 +218,7 @@ function gameEngine:beat()
   self:spawnBlocksThatShouldBeSpawned()
   self:snapBlocksToGrid() 
   self:resolveCollisions()
-  self:removeOffGridBlocks()
+  --self:removeOffGridBlocks()
   self:moveBlocksThatShouldBeMoved()
   
   self.beatCount = self.beatCount + 1
@@ -274,6 +275,7 @@ function gameEngine:init(g, levelData)
   g.gridYOffset = levelData.gridYOffset
   g.spriteSize = levelData.spriteSize
   g.rawActions = levelData.actions
+  g.offGridIndex = g.gridWidth * g.gridHeight + 1
   g.items = {}
   g.actionsByLocation = {}
   g.blocks = cBlockMutableSet:new()
