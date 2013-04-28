@@ -137,16 +137,6 @@ function gameEngine:spawnBlocksThatShouldBeSpawned()
   end
 end
 
-function gameEngine:removeOffGridBlocks()
-  local blocksToRemove = cMutableSet:new()
-  for _, block in pairs(self.blocks.objects) do
-    if not self.grid:anyPartIsOnGrid(block) then
-      blocksToRemove:add(block)
-    end
-  end  
-  self.blocks:removeSet(blocksToRemove)
-end
-
 function gameEngine:moveBlocksThatShouldBeMoved()
   for _, block in pairs(self.blocks.objects) do
     self:tweenBlock(block)
@@ -162,7 +152,14 @@ function gameEngine:itemsDidCenterCollide(item1, item2)
 end
 
 function gameEngine:indexForItem(item)
-  return item.xGrid + ((item.yGrid - 1) * self.gridWidth)
+  if item.xGrid < 1 or 
+    item.yGrid < 1 or 
+    item.xGrid > self.gridWidth or 
+    item.yGrid > self.gridHeight then 
+      return self.offGridIndex
+    else  
+      return item.xGrid + ((item.yGrid - 1) * self.gridWidth)
+    end
 end
 
 function gameEngine:updateActionsByLocationTable()
@@ -179,7 +176,6 @@ function gameEngine:updateBlocksByLocationTable()
   self.blocksByLocation = {}
   for _, v in pairs(self.blocks.objects) do
     local index = self:indexForItem(v)
-    if index < 1 or index >= self.offGridIndex then index = self.offGridIndex end
     if not self.blocksByLocation[index] then
       self.blocksByLocation[index] = cMutableSet:new()
     end
@@ -193,6 +189,9 @@ function gameEngine:resolveBlockCollisions()
   for index, blocksInLocation in pairs(self.blocksByLocation) do
     if #blocksInLocation.objects > 1 or index == self.offGridIndex then
       for _, block in pairs(blocksInLocation.objects) do
+        if index ~= self.offGridIndex then
+          block.removalAnimation = "explode"
+        end
         blocksToRemove:add(block)
       end
     end
@@ -218,7 +217,6 @@ function gameEngine:beat()
   self:spawnBlocksThatShouldBeSpawned()
   self:snapBlocksToGrid() 
   self:resolveCollisions()
-  --self:removeOffGridBlocks()
   self:moveBlocksThatShouldBeMoved()
   
   self.beatCount = self.beatCount + 1

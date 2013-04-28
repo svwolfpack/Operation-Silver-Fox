@@ -9,8 +9,10 @@
 local cMutableSet = dofile("mutableSet.lua")
 local blockMutableSet = inheritsFrom(cMutableSet)
 
+
+
 function blockMutableSet:remove(block)
-  block.sprite:removeFromParent()
+  block:removeSprite()
   cMutableSet.remove(self, block)
 end
 
