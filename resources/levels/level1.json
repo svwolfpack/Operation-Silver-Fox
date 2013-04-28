@@ -10,44 +10,16 @@
 			"xGrid" : 1, 
 			"yGrid" : 3, 
 			"direction" : "right",
-			"repeating" : 0,
-			"frequency" : 2,
-			"speed" : 1
-		},
-		{
-			"itemType" : "spawner", 
-			"xGrid" : 2, 
-			"yGrid" : 1, 
-			"direction" : "up",
-			"repeating" : 0,
+			"repeating" : 1,
 			"frequency" : 3,
 			"speed" : 1
 		},
-		{
-			"itemType" : "spawner", 
-			"xGrid" : 4, 
-			"yGrid" : 8, 
-			"direction" : "down",
-			"repeating" : 0,
-			"frequency" : 2,
-			"speed" : 1
-		},
-		{
-			"itemType" : "spawner", 
-			"xGrid" : 6, 
-			"yGrid" : 2, 
-			"direction" : "left",
-			"repeating" : 0,
-			"frequency" : 2,
-			"speed" : 1
-		},
-
 		{
 			"itemType" : "note",
 			"xGrid" : 0,
 			"yGrid" : 0,
 			"instrument" : "bass",
-			"note" : "e" 
+			"note" : "A2"
 		},
 		{
 			"itemType" : "directionArrow",
