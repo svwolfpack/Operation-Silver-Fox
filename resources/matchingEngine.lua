@@ -33,14 +33,12 @@ function matchingEngine:verifyNote(actionNote, beat)
   
   -- If there are no more objects left in the song, then the song is complete
   if #self.songWorkingCopy.objects == 0 then
-    print ("song complete!")
     self.songIsComplete = true
   end    
 end
 
 function matchingEngine:reset()
- dbg.printTable(self.song)
- self.songWorkingCopy = cMutableSet:new()
+  self.songWorkingCopy = cMutableSet:new()
   self.lastBeatNumber = 1
   for _, noteAndBeat in pairs(self.song) do
       if noteAndBeat.beat > self.lastBeatNumber then
@@ -48,7 +46,6 @@ function matchingEngine:reset()
       end
       self.songWorkingCopy:add(noteAndBeat)
   end
-  print ("last beat:" .. self.lastBeatNumber)
   self.allNotesHaveMatched = true
   self.songIsComplete = false
   self.beatOffset = -1 --This allows us to match the song regardless of what beat from the game engine the first note is on, i.e. if the gameEngine beat == 7, and that's the first note played, then we can match that with level beat 1
