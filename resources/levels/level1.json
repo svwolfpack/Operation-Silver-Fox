@@ -1,17 +1,53 @@
 {
- 	"levelName" : "Level Eins",
+ 	"levelName" : "Zis Is Easy!",
 	"backgroundImage" : "background1.png",
-	"gridHeight" : 8,
-	"gridWidth" : 8,
+	"gridHeight" : 2,
+	"gridWidth" : 6,
 	"tempo" : 100, 
+	"song" : [
+		{
+			"beat" : 2
+			"note" : "E3"
+		},
+		{
+			"beat" : 3
+			"note" : "D3"
+		},	
+		{
+			"beat" : 4
+			"note" : "C3"
+		},
+{
+			"beat" : 6
+			"note" : "E3"
+		},
+		{
+			"beat" : 7
+			"note" : "D3"
+		},	
+		{
+			"beat" : 8
+			"note" : "C3"
+		}
+	],
+
 	"actions" : [
 		{
 			"itemType" : "spawner", 
 			"xGrid" : 1, 
-			"yGrid" : 3, 
+			"yGrid" : 1, 
 			"direction" : "right",
-			"repeating" : 0,
-			"frequency" : 3,
+			"repeating" : 1,
+			"frequency" : 1,
+			"speed" : 1
+		},
+{
+			"itemType" : "spawner", 
+			"xGrid" : 6, 
+			"yGrid" : 2, 
+			"direction" : "left",
+			"repeating" : 1,
+			"frequency" : 1,
 			"speed" : 1
 		},
 		{
@@ -21,37 +57,31 @@
 			"instrument" : "bass",
 			"note" : "E3"
 		},
-{
+		{
 			"itemType" : "note",
 			"xGrid" : 0,
 			"yGrid" : 0,
 			"instrument" : "bass",
 			"note" : "D3"
 		},
-{
+		{
 			"itemType" : "note",
 			"xGrid" : 0,
 			"yGrid" : 0,
 			"instrument" : "bass",
 			"note" : "C3"
 		},
-		{
-			"itemType" : "directionArrow",
-			"xGrid" : 0,
-			"yGrid" : 0,
-			"direction" : "up"
-		}
 	       	{
 			"itemType" : "directionArrow",
 			"xGrid" : 0,
 			"yGrid" : 0,
 			"direction" : "down"
-		}
+		},
 		{
 			"itemType" : "directionArrow",
 			"xGrid" : 0,
 			"yGrid" : 0,
-			"direction" : "left"
+			"direction" : "right"
 		}
 	]
 }

@@ -16,6 +16,7 @@ local cBlock = dofile("block.lua")
 local cDock = dofile("dock.lua") 
 local cMutableSet = dofile("mutableSet.lua")
 local cBlockMutableSet = dofile("blockMutableSet.lua")
+local cMatchingEngine = dofile("matchingEngine.lua")
 
 function gameEngine:loadActions()
   self.items = {}
@@ -212,13 +213,46 @@ function gameEngine:resolveCollisions()
   self:resolveActionCollisions()
 end
 
+function gameEngine:displayEnding()
+ self:stop()
+    
+    self.scene:resetUI()
+ 
+ if self.victory then 
+    print "you win!"
+  else
+    print "you lose!"
+  end
+end
+
+
+function gameEngine:checkForSongMatch()
+  local shouldContinue = true
+  if self.matchingEngine.allNotesHaveMatched then
+    if self.matchingEngine.songIsComplete then
+      shouldContinue = false
+      self.victory = true
+    end
+  else
+    shouldContinue = false
+  end
+  return shouldContinue
+end
+
+function gameEngine:songLengthNotExceeded()
+  return self.beatCount <= self.matchingEngine.lastBeatNumber
+end
+
 function gameEngine:beat()
   self:spawnBlocksThatShouldBeSpawned()
   self:snapBlocksToGrid() 
   self:resolveCollisions()
-  self:moveBlocksThatShouldBeMoved()
-  
-  self.beatCount = self.beatCount + 1
+  if self:checkForSongMatch() and self:songLengthNotExceeded() then
+    self:moveBlocksThatShouldBeMoved()
+    self.beatCount = self.beatCount + 1
+  else
+    self:displayEnding()
+  end  
 end
 
 function gameEngine:resetSpawners()
@@ -247,6 +281,8 @@ function gameEngine:setRunning(state)
 end
 
 function gameEngine:start()
+  self.matchingEngine:reset()
+  self.victory = false
   self.beatCount = 1
   self.elapsedBeatTime = 0
   self:updateActionsByLocationTable()
@@ -267,6 +303,7 @@ function gameEngine:new(levelData)
 end
 
 function gameEngine:init(g, levelData)
+  g.scene = levelData.scene
   g.gridWidth = levelData.gridWidth
   g.gridHeight = levelData.gridHeight
   g.gridXOffset = levelData.gridXOffset
@@ -274,6 +311,7 @@ function gameEngine:init(g, levelData)
   g.spriteSize = levelData.spriteSize
   g.rawActions = levelData.actions
   g.offGridIndex = g.gridWidth * g.gridHeight + 1
+  g.matchingEngine = cMatchingEngine:new(levelData.song)
   g.items = {}
   g.actionsByLocation = {}
   g.blocks = cBlockMutableSet:new()
@@ -283,6 +321,7 @@ function gameEngine:init(g, levelData)
   g.elapsedBeatTime = 0
   g.beatCount = 1
   g.engineRunning = false
+  g.victory = false
   system:addEventListener("update", g)
   
   g:setupGrid()

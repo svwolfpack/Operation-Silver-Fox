@@ -22,14 +22,18 @@ function scene:loadLevelJSON()
   encoded = file:read("*a")
   file:close()
   self.levelData = json.decode(encoded)
+  self.levelData.scene = self
   self.levelData.spriteSize = spriteSize
   self.levelData.gridXOffset = centeringOffset(self.levelData.gridWidth * self.levelData.spriteSize + self.levelData.gridWidth, director.displayWidth)
   self.levelData.gridYOffset = centeringOffset(self.levelData.gridHeight * self.levelData.spriteSize + self.levelData.gridHeight, director.displayHeight) 
 end
 
 function scene:renderUIElements()
-  self.titleLabel = director:createLabel(20, director.displayHeight - 50, "Play Zis: ".. self.levelData.levelName)    
-  
+  self.titleLabel = director:createLabel(20, director.displayHeight - 50, "Level: ".. self.levelData.levelName)    
+  self.notesInLevelLabel = director:createLabel(20, director.displayHeight - 70, "")
+  for _, notesAndBeats in ipairs(self.levelData.song) do
+      self.notesInLevelLabel.text = self.notesInLevelLabel.text .. notesAndBeats.note .. " "
+  end
   self.backButton =  director:createLabel(10, 10, "zurück")
   function self.backButton:touch(event)
     if event.phase == "ended" then
@@ -56,9 +60,13 @@ function scene:renderUIElements()
     end
     return true
   end
-  self.startStopButton:addEventListener("touch", self.startStopButton)
-  
+  self.startStopButton:addEventListener("touch", self.startStopButton) 
 end
+
+function scene:resetUI()
+    self.startStopButton.text = self.startStopButton.startText
+end
+
 
 function scene:setupGameEngine()
   self.gameEngine = cGameEngine:new(self.levelData)
