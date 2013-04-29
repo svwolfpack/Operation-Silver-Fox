@@ -6,27 +6,27 @@
 	"tempo" : 100, 
 	"song" : [
 		{
-			"beat" : 2
+			"beat" : 1
 			"note" : "E3"
 		},
 		{
-			"beat" : 3
+			"beat" : 2
 			"note" : "D3"
 		},	
 		{
-			"beat" : 4
+			"beat" : 3
 			"note" : "C3"
 		},
 {
-			"beat" : 6
+			"beat" : 5
 			"note" : "E3"
 		},
 		{
-			"beat" : 7
+			"beat" : 6
 			"note" : "D3"
 		},	
 		{
-			"beat" : 8
+			"beat" : 7
 			"note" : "C3"
 		}
 	],
