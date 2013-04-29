@@ -18,14 +18,13 @@ function block:removeSprite()
     self.sprite:removeFromParent()
   elseif self.removalAnimation == "explode" then
     self.sprite.zOrder = 10
-    local direction = 1
-    if math.random() > 0.5 then direction = -1 end
+    local direction = (math.random() - 0.5) * 4
     tween:to(self.sprite, {xScale = 5.0, yScale = 5.0, rotation = 360 * direction, time = 1, alpha = 0.0, onComplete = self.finishedExploding})
   end
 end
 
 function block:updateSpriteLocationWithTween(time)
-  tween:to(self.sprite, {x = self.x, y = self.y, easing = ease.expIn, easingValue = 2.5, time = time})
+  tween:to(self.sprite, {x = self.x, y = self.y, easing = ease.powIn, easingValue = 3, time = time})
 end
 
 function block:new(blockData)

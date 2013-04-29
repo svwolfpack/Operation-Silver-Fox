@@ -23,6 +23,9 @@ function actionNote:init(a, itemData)
   itemData.color = {0, 255, 0}
   cTouchItem:init(a, itemData)
   a.note = itemData.note
+  local noteLabel = director:createLabel(0, 0, a.note)
+  noteLabel.color = {0, 0, 0}
+  a.sprite:addChild(noteLabel)
   a.fileName = "sounds/" .. a.note .. ".snd"
   audio:loadSound(a.fileName)
 end

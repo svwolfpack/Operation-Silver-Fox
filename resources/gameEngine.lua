@@ -116,7 +116,6 @@ function gameEngine:spawnBlock(spawner)
   blockData.y = spawner.y
   blockData.speed = self:blockSpeed(spawner)
   blockData.direction = spawner.direction
-  blockData.gameEngine = self
   local newBlock = cBlock:new(blockData)
   self.blocks:add(newBlock) 
 end
@@ -248,7 +247,8 @@ function gameEngine:setRunning(state)
 end
 
 function gameEngine:start()
-  self.beatCount = 0
+  self.beatCount = 1
+  self.elapsedBeatTime = 0
   self:updateActionsByLocationTable()
   self:beat() -- Initial beat, otherwise update won't catch it until the 2nd beat
   self:setRunning(true)
