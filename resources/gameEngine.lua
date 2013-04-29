@@ -17,6 +17,7 @@ local cDock = dofile("dock.lua")
 local cMutableSet = dofile("mutableSet.lua")
 local cBlockMutableSet = dofile("blockMutableSet.lua")
 local cMatchingEngine = dofile("matchingEngine.lua")
+local cSongPlayer = dofile("songPlayer.lua")
 
 function gameEngine:loadActions()
   self.items = {}
@@ -267,8 +268,6 @@ function gameEngine:update(event)
     if self.elapsedBeatTime >= self.secondsPerBeat then
       self:beat()
       self.elapsedBeatTime = 0
-   elseif self.elapsedBeatTime >= self.secondsPerBeat / 2 then
-      self:snapBlocksToGrid()
    end
   end
 end
@@ -328,6 +327,7 @@ function gameEngine:init(g, levelData)
   g:setupDock()
   g:loadActions()
   g:renderActions()
+  cSongPlayer:playSong(levelData.song, g.tempo, {})
 end
 
 function gameEngine:unload()
