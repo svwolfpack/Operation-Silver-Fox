@@ -41,7 +41,12 @@
 			"frequency" : 1,
 			"speed" : 1
 		},
-{
+		{
+			"itemType" : "hole",
+			"xGrid" : 3,
+			"yGrid" : 2
+		},
+		{
 			"itemType" : "spawner", 
 			"xGrid" : 6, 
 			"yGrid" : 2, 

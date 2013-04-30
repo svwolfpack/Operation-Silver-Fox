@@ -9,7 +9,7 @@
 local item = inheritsFrom(baseClass)
 
 function item:centerCollisionWithItem(item)
-
+  return nil
 end
 
 function item:startWiggling()

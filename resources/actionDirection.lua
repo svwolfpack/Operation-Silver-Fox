@@ -11,6 +11,7 @@ local actionDirection = inheritsFrom(cTouchItem)
 
 function actionDirection:centerCollisionWithItem(item)
   item.direction = self.direction
+  return nil
 end
 
 function actionDirection:addDotsToSprite() -- Eventually we won't need this

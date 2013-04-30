@@ -12,6 +12,7 @@ local actionNote = inheritsFrom(cTouchItem)
 function actionNote:centerCollisionWithItem(item)
   audio:playSound(self.fileName)
   self.gameEngine.matchingEngine:verifyNote(self, self.gameEngine.beatCount)
+  return nil
 end
 
 function actionNote:new(itemJSONData)

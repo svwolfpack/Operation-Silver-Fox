@@ -14,12 +14,16 @@ function block:finishedExploding(tween)
 end
 
 function block:removeSprite()
-  if self.removalAnimation == "none" then
+  if self.removalAnimation == self.none then
     self.sprite:removeFromParent()
-  elseif self.removalAnimation == "explode" then
+  elseif self.removalAnimation == self.explode then
     self.sprite.zOrder = 10
     local direction = (math.random() - 0.5) * 4
     tween:to(self.sprite, {xScale = 5.0, yScale = 5.0, rotation = 360 * direction, time = 1, alpha = 0.0, onComplete = self.finishedExploding})
+  elseif self.removalAnimation == self.shrink then
+    self.sprite.zOrder = 10
+    local direction = (math.random() - 0.5) * 4
+    tween:to(self.sprite, {xScale = 0, yScale = 0, rotation = 360 * direction, time = 1, alpha = 0.0, onComplete = self.finishedExploding})
   end
 end
 
@@ -39,7 +43,10 @@ function block:init(b, blockData)
   cItem:init(b, blockData)
   b.sprite.strokeWidth = 0
   b.speed = blockData.speed or 0 
-  b.removalAnimation = "none"
+  b.explode = "explode"
+  b.shrink = "shrink"
+  b.none = "none"
+  b.removalAnimation = b.none
 end
 
 return block

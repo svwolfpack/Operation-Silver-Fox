@@ -11,6 +11,7 @@ local gameEngine = inheritsFrom(baseClass)
 local cGrid = dofile("grid.lua")
 local cActionDirection = dofile("actionDirection.lua")
 local cActionNote = dofile("actionNote.lua")
+local cActionHole = dofile("actionHole.lua")
 local cActionSpawner = dofile("actionSpawner.lua")
 local cBlock = dofile("block.lua")
 local cDock = dofile("dock.lua") 
@@ -32,6 +33,8 @@ function gameEngine:loadActions()
       item = cActionNote:new(itemJSONData)
     elseif itemJSONData.itemType == "directionArrow" then
       item = cActionDirection:new(itemJSONData)
+    elseif itemJSONData.itemType == "hole" then
+      item = cActionHole:new(itemJSONData)
     end
     table.insert(self.items, item)
   end
@@ -191,7 +194,7 @@ function gameEngine:resolveBlockCollisions()
     if #blocksInLocation.objects > 1 or index == self.offGridIndex then
       for _, block in pairs(blocksInLocation.objects) do
         if index ~= self.offGridIndex then
-          block.removalAnimation = "explode"
+          block.removalAnimation = block.explode
         end
         blocksToRemove:add(block)
       end
@@ -201,12 +204,15 @@ function gameEngine:resolveBlockCollisions()
 end
 
 function gameEngine:resolveActionCollisions()
+  local blocksToRemove = cMutableSet:new()
   for _, block in pairs(self.blocks.objects) do
     local action = self.actionsByLocation[self:indexForItem(block)] or nil
     if action and self:itemsDidCenterCollide(action, block) then
-      action:centerCollisionWithItem(block)
+      local blockToRemove = action:centerCollisionWithItem(block)
+      if blockToRemove then blocksToRemove:add(blockToRemove) end
     end
   end
+  self.blocks:removeSet(blocksToRemove)
 end
 
 function gameEngine:resolveCollisions()
