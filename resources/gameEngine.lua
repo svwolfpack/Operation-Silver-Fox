@@ -12,6 +12,7 @@ local cGrid = dofile("grid.lua")
 local cActionDirection = dofile("actionDirection.lua")
 local cActionNote = dofile("actionNote.lua")
 local cActionHole = dofile("actionHole.lua")
+local cActionPortal = dofile("actionPortal.lua")
 local cActionSpawner = dofile("actionSpawner.lua")
 local cBlock = dofile("block.lua")
 local cDock = dofile("dock.lua") 
@@ -20,33 +21,7 @@ local cBlockMutableSet = dofile("blockMutableSet.lua")
 local cMatchingEngine = dofile("matchingEngine.lua")
 local cSongPlayer = dofile("songPlayer.lua")
 
-function gameEngine:loadActions()
-  self.items = {}
-  for i, itemJSONData in ipairs(self.rawActions) do
-    itemJSONData.spriteSize = self.spriteSize
-    itemJSONData.gameEngine = self
-    itemJSONData.id = i
-    local item 
-    if itemJSONData.itemType == "spawner" then
-      item = cActionSpawner:new(itemJSONData)
-    elseif itemJSONData.itemType == "note" then
-      item = cActionNote:new(itemJSONData)
-    elseif itemJSONData.itemType == "directionArrow" then
-      item = cActionDirection:new(itemJSONData)
-    elseif itemJSONData.itemType == "hole" then
-      item = cActionHole:new(itemJSONData)
-    end
-    table.insert(self.items, item)
-  end
-end
 
-function gameEngine:setupGrid()  
-  self.grid = cGrid:new(self.gridWidth, self.gridHeight, self.gridXOffset, self.gridYOffset, self.spriteSize)
-end
-
-function gameEngine:setupDock()
-  self.dock = cDock:new({x = 10, y = 40, director.displayWidth - 20, self.spriteSize}, self.spriteSize)   
-end
 
 function gameEngine:itemIsAloneOnGrid(item)
   for _, v in ipairs(self.items) do
@@ -71,11 +46,11 @@ function gameEngine:layoutItem(item)
 end
  
 function gameEngine:renderActions()
-  for _, v in ipairs(self.items) do  
-    if v.xGrid ~= 0 and v.yGrid ~= 0 then -- Calculate starting coordinates if not in dock  
-      v.x, v.y = self.grid:coordinatesForGridIndices(v.xGrid, v.yGrid)
+  for _, item in pairs(self.items) do  
+    if item.xGrid ~= 0 and item.yGrid ~= 0 then -- Calculate starting coordinates if not in dock  
+      item.x, item.y = self.grid:coordinatesForGridIndices(item.xGrid, item.yGrid)
     end
-    self:layoutItem(v)
+    self:layoutItem(item)
   end
   self.dock.tweening = true
 end
@@ -92,7 +67,6 @@ function gameEngine:removeAllBlocks()
 end
 
 function gameEngine:tweenBlock(block)
-  
   if block.speed ~= 0 then
     if block.direction == "up" then
       block.y = block.y + block.spriteSize
@@ -208,7 +182,7 @@ function gameEngine:resolveActionCollisions()
   for _, block in pairs(self.blocks.objects) do
     local action = self.actionsByLocation[self:indexForItem(block)] or nil
     if action and self:itemsDidCenterCollide(action, block) then
-      local blockToRemove = action:centerCollisionWithItem(block)
+      local blockToRemove = action:centerCollisionWithItem(block) -- We don't want to be removing blocks as we're looping through them, so we need to just flag 'em and remove them at the end
       if blockToRemove then blocksToRemove:add(blockToRemove) end
     end
   end
@@ -299,6 +273,49 @@ function gameEngine:stop()
   self:setRunning(false)
   self.blocks = self:removeAllBlocks()
   self:resetSpawners()  
+end
+
+function gameEngine:setupPortals()
+  local portals = {}
+  for _, item in pairs(self.items) do
+    if item.itemType == "portal" then
+      portals[item.portalID] = item
+    end 
+  end
+  for _, portal in pairs(portals) do
+    portal.sibling = portals[portal.siblingID]
+  end
+end
+
+function gameEngine:loadActions()
+  self.items = {}
+  for i, itemJSONData in ipairs(self.rawActions) do
+    itemJSONData.spriteSize = self.spriteSize
+    itemJSONData.gameEngine = self
+    itemJSONData.id = i
+    local item 
+    if itemJSONData.itemType == "spawner" then
+      item = cActionSpawner:new(itemJSONData)
+    elseif itemJSONData.itemType == "note" then
+      item = cActionNote:new(itemJSONData)
+    elseif itemJSONData.itemType == "directionArrow" then
+      item = cActionDirection:new(itemJSONData)
+    elseif itemJSONData.itemType == "hole" then
+      item = cActionHole:new(itemJSONData)
+    elseif itemJSONData.itemType == "portal" then
+      item = cActionPortal:new(itemJSONData)
+    end
+    table.insert(self.items, item)
+  end
+  self:setupPortals()
+end
+
+function gameEngine:setupGrid()  
+  self.grid = cGrid:new(self.gridWidth, self.gridHeight, self.gridXOffset, self.gridYOffset, self.spriteSize)
+end
+
+function gameEngine:setupDock()
+  self.dock = cDock:new({x = 10, y = 40, director.displayWidth - 20, self.spriteSize}, self.spriteSize)   
 end
 
 function gameEngine:new(levelData)
