@@ -3,11 +3,16 @@
 	v0.1
 	4/24/2012
 	
-	Direction Arrow Object
+	Spawner Object
 --]]
 
 local cItem = dofile("item.lua")
 local actionSpawner = inheritsFrom(cItem)
+
+function actionSpawner:centerCollisionWithItem(item)
+  item.removalAnimation = item.explode
+  return item
+end
 
 function actionSpawner:addDotsToSprite() -- Eventually we won't need this
   if self.direction then

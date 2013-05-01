@@ -229,10 +229,11 @@ function gameEngine:songLengthNotExceeded()
 end
 
 function gameEngine:beat()
-  self:spawnBlocksThatShouldBeSpawned()
+  
   self:snapBlocksToGrid() 
   self:resolveCollisions()
   if self:checkForSongMatch() and self:songLengthNotExceeded() then
+    self:spawnBlocksThatShouldBeSpawned()
     self:moveBlocksThatShouldBeMoved()
     self.beatCount = self.beatCount + 1
   else
