@@ -25,6 +25,11 @@
 --------------------------------------------------------------------------------
 director = quick.QDirector:new()
 
+getmetatable(director).__serialize = function(o)
+	local obj = serializeTLMT(getmetatable(o), o)
+	return obj
+end
+
 --------------------------------------------------------------------------------
 -- Private API
 --------------------------------------------------------------------------------
@@ -101,6 +106,11 @@ function director:update()
 
     -- Sync scene graph
     director:_syncNodeAndChildren(s, system.deltaTime)
+
+	-- Sync web views
+    if nui then
+	    nui:_syncWebViews()
+    end
 
     -- Process instant scene changes without event locks getting in the way of
     -- the tearDown process
@@ -292,27 +302,6 @@ end
 ----------------------------------
 -- Scenes
 ----------------------------------
--- PRIVATE:
--- Create default scene. Use of global variable ensures Lua doesn't GC it.
--- Doesn't use createScene because of extra parameters
-function director:createDefaultScene()
---    dbg.print("director:createDefaultScene")
-    local n = quick.QScene()
-    QNode:initNode(n)
-    QScene:initScene(n)
-    n:_init(true)
-    n.name = "globalScene"
-    self:setCurrentScene(n)
-
-    -- Store in globalScene variable, if it's nil
-    if not self.globalScene then
-        self.globalScene = n
-    end
-
-    -- Return globalScene object
-    return n
-end
-
 --[[
 /**
 Move to a new scene.

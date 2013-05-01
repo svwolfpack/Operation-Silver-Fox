@@ -53,18 +53,19 @@ USE CCObject:m_uID
 -- NOTE: This file must have no dependencies on the ones loaded after it by
 -- openquick_init.lua. For example, it must have no dependencies on QDirector.lua
 --------------------------------------------------------------------------------
-if config.debug.mock_tolua == true then
-	QSprite = quick.QSprite
-else
-	QSprite = {}
-    table.setValuesFromTable(QSprite, QNode) -- previous class in hierarchy
-	QSprite.__index = QSprite
-end
-
+QSprite = {}
+table.setValuesFromTable(QSprite, QNode) -- previous class in hierarchy
+QSprite.__index = QSprite
 
 --------------------------------------------------------------------------------
 -- Private API
 --------------------------------------------------------------------------------
+QSprite.serialize = function(o)
+	local obj = serializeTLMT(getmetatable(o), o)
+    table.setValuesFromTable(obj, serializeTLMT(getmetatable(quick.QSprite), o))
+	return obj
+end
+
 --[[
 /*
 Initialise the peer table for the C++ class QSprite.
@@ -72,23 +73,14 @@ This must be called immediately after the QSprite() constructor.
 */
 --]]
 function QSprite:initSprite(n)
-	local np
-	if not config.debug.mock_tolua == true then
-	    local np = {}
-        local ep = tolua.getpeer(n)
-        table.setValuesFromTable(np, ep)
-	    setmetatable(np, QSprite)
-	    tolua.setpeer(n, np)
+	local np = {}
+    local ep = tolua.getpeer(n)
+    table.setValuesFromTable(np, ep)
+	setmetatable(np, QSprite)
+	tolua.setpeer(n, np)
 
---[[        local mt = getmetatable(n)
-        mt.__gc = function(self)
-            director.runTextureCleanup = true
-            self:delete()
-        end
-        ]]
-	else
-		np = n
-	end
+    local mt = getmetatable(n) 
+    mt.__serialize = QSprite.serialize
 end
 
 --------------------------------------------------------------------------------
@@ -152,6 +144,15 @@ function director:createSprite(x, y, source)
     end
 
     return n
+end
+
+-- PRIVATE
+function director:_createSpriteNoCCNode()
+    local n = quick.QSprite(false)
+    QNode:initNode(n)
+    QSprite:initSprite(n)
+    self:addNodeToLists(n)
+	return n
 end
 
 --[[

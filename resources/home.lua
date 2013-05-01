@@ -10,7 +10,7 @@
 local scene = director:createScene()
 
 function scene:setUp(event)
-  self.titleLabel = director:createLabel(20, director.displayHeight - 50, "Velcome To Blockënspiel!")
+  self.titleLabel = director:createLabel(10, director.displayHeight - 50, "Velcome To Blockënspiel!")
   self.playButton = director:createLabel(100, director.displayHeight - 200, "Spiel!")
       
   function self.playButton:touch(event)

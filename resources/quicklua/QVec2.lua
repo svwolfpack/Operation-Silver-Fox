@@ -21,37 +21,16 @@
  */--]]
 
 --------------------------------------------------------------------------------
--- audio singleton
+-- Vec2
+-- NOTE: This file must have no dependencies on the ones loaded after it by
+-- openquick_init.lua. For example, it must have no dependencies on QDirector.lua
 --------------------------------------------------------------------------------
-audio = quick.QAudio:new()
 
---------------------------------------------------------------------------------
--- Public API
---------------------------------------------------------------------------------
---[[
-/**
-Play a stream
-@param fileName The name of the file to play
-@param bLoop (optional) specify if the stream is to loop
-@return The created node.
-*/
---]]
-function audio:playStream( fileName, bLoop)
-    dbg.assertFuncVarType("string", fileName)
-    dbg.assertFuncVarTypes({"boolean", "nil"}, bLoop)
-    self:playStreamWithLoop( fileName, bLoop or false)
+-- Serialize
+QVec2_serialize = function(o)
+	local obj = serializeTLMT(getmetatable(o), o)
+	return obj
 end
-
---[[
-/**
-Play a sound
-@param fileName The name of the file to play
-@param bLoop (optional) specify if the stream is to loop
-@return The created node.
-*/
---]]
-function audio:playSound( fileName, bLoop)
-    dbg.assertFuncVarType("string", fileName)
-    dbg.assertFuncVarTypes({"boolean", "nil"}, bLoop)
-    return self:playSoundWithLoop( fileName, bLoop or false)
-end
+local vecTemp = quick.QVec2:new()
+local mt = getmetatable(vecTemp)
+mt.__serialize = QVec2_serialize

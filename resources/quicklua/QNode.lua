@@ -25,34 +25,57 @@
 -- NOTE: This file must have no dependencies on the ones loaded after it by
 -- openquick_init.lua. For example, it must have no dependencies on QDirector.lua
 --------------------------------------------------------------------------------
-if config.debug.mock_tolua == true then
-	QNode = quick.QNode
-else
-	QNode = {}
-	QNode.__index = QNode
-end
+QNode = {}
+QNode.__index = QNode
 
 -- Explicit override when setting color property, to allow for assignment
 prop_setColor = function(prop, value)
     if value.r then
-        -- Assume value is an existing QColor object: copy r,g,b
-        prop.r = value.r
-        prop.g = value.g
-        prop.b = value.b
+        -- Assume value is an existing QColor object: copy r,g,b,a
+        prop.r = value.r or 0xff
+        prop.g = value.g or 0xff
+        prop.b = value.b or 0xff
+        prop.a = value.a or 0xff
     else
-        -- Assume value is a tuple, copy 1,2,3
-        prop.r = value[1]
-        prop.g = value[2]
-        prop.b = value[3]
+        -- Assume value is a tuple, copy 1,2,3,4
+        prop.r = value[1] or 0xff
+        prop.g = value[2] or 0xff
+        prop.b = value[3] or 0xff
+        prop.a = value[4] or 0xff
     end
 end
 
-local oldNodeMTNI
-if config.debug.mock_tolua == true then
-	oldNodeMTNI = function(t, name, value) t.name = value end
-else
-	oldNodeMTNI = getmetatable(quick.QNode).__newindex
+-- Explicit override when setting rect property, to allow for assignment
+prop_setRect = function(prop, value)
+    if value.w then
+        -- Assume value is an existing rect object: copy x,y,w,h
+        prop.x = value.x or 0
+        prop.y = value.y or 0
+        prop.w = value.w or 0
+        prop.h = value.h or 0
+    else
+        -- Assume value is a tuple, copy 1,2,3,4
+        prop.x = value[1] or 0
+        prop.y = value[2] or 0
+        prop.w = value[3] or 0
+        prop.h = value[4] or 0
+    end
 end
+
+-- Explicit override when setting vec2 property, to allow for assignment
+prop_setVec2 = function(prop, value)
+    if value.x then
+        -- Assume value is an existing QVec2 object: copy x,y
+        prop.x = value.x or 0
+        prop.y = value.y or 0
+    else
+        -- Assume value is a tuple, copy 1,2
+        prop.x = value[1] or 0
+        prop.y = value[2] or 0
+    end
+end
+
+local oldNodeMTNI = getmetatable(quick.QNode).__newindex
 QNode_set = function(t, name, value)
     if name == "color" then
         prop_setColor(t.color, value)
@@ -60,6 +83,8 @@ QNode_set = function(t, name, value)
         prop_setColor(t.strokeColor, value)
     elseif name == "debugDrawColor" then
         prop_setColor(t.debugDrawColor, value)
+    elseif name == "uvRect" then -- Handle uvRect, even though it's a property of QSprite
+        prop_setRect(t.uvRect, value)
     else
         oldNodeMTNI(t, name, value)
     end
@@ -68,13 +93,17 @@ end
 --------------------------------------------------------------------------------
 -- Private API
 --------------------------------------------------------------------------------
+QNode.serialize = function(o)
+	local obj = serializeTLMT(getmetatable(o), o)
+	return obj
+end
+
 --[[
 /*
 Initialise the peer table for the C++ class QNode.
 This must be called immediately after the QNode() constructor.
 */
 --]]
-
 -- Override QNode GC function (still call old one at the end)
 QNode.oldGC = getmetatable(quick.QNode).__gc
 QNode.newGC = function(n)
@@ -97,20 +126,19 @@ end
     
 function QNode:initNode(n)
     -- Allow explicit control over assignment... see above
-	if config.debug.mock_tolua == false then
-		getmetatable(n).__newindex = QNode_set
-	end
+	getmetatable(n).__newindex = QNode_set
+
     -- ALWAYS set this, because it does stuff even in non-debug mode, e.g. remove node from physics
     getmetatable(n).__gc = QNode.newGC
 
 	local np
-	if not config.debug.mock_tolua == true then
-		np = {}
-		setmetatable(np, QNode)
-		tolua.setpeer(n, np)
-	else
-		np = n
-	end
+	np = {}
+	setmetatable(np, QNode)
+	tolua.setpeer(n, np)
+
+    local mt = getmetatable(n) 
+    mt.__serialize = QNode.serialize
+
     np.parent = nil
     np.children = {}
     np.tweens = {}
@@ -218,13 +246,17 @@ before being added as a child to the specified node.
 */
 --]]
 function QNode:setParent(np)
-    dbg.assertFuncVarType("userdata", np)
+    if np == nil and self.parent then
+        self:removeFromParent()
+    else
+        dbg.assertFuncVarType("userdata", np)
 
-    if self.parent then
-        self.parent:removeChild(self)
+        if self.parent then
+            self.parent:removeChild(self)
+        end
+        self.parent = np
+        self:_setParent(np)
     end
-    self.parent = np
-    self:_setParent(np)
 end
 
 --[[

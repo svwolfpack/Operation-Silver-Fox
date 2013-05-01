@@ -21,37 +21,36 @@
  */--]]
 
 --------------------------------------------------------------------------------
--- audio singleton
+-- NUI singleton
 --------------------------------------------------------------------------------
-audio = quick.QAudio:new()
+nui = quick.QNUI:new()
 
---------------------------------------------------------------------------------
--- Public API
---------------------------------------------------------------------------------
---[[
-/**
-Play a stream
-@param fileName The name of the file to play
-@param bLoop (optional) specify if the stream is to loop
-@return The created node.
-*/
---]]
-function audio:playStream( fileName, bLoop)
-    dbg.assertFuncVarType("string", fileName)
-    dbg.assertFuncVarTypes({"boolean", "nil"}, bLoop)
-    self:playStreamWithLoop( fileName, bLoop or false)
+getmetatable(nui).__serialize = function(o)
+	local obj = serializeTLMT(getmetatable(o), o)
+	return obj
 end
 
---[[
-/**
-Play a sound
-@param fileName The name of the file to play
-@param bLoop (optional) specify if the stream is to loop
-@return The created node.
-*/
---]]
-function audio:playSound( fileName, bLoop)
-    dbg.assertFuncVarType("string", fileName)
-    dbg.assertFuncVarTypes({"boolean", "nil"}, bLoop)
-    return self:playSoundWithLoop( fileName, bLoop or false)
+nui._webViewList = {}
+
+--------------------------------------------------------------------------------
+-- Private API
+--------------------------------------------------------------------------------
+function nui:_purge()
+    -- Destroy all web views
+    for i,v in pairs(self._webViewList) do
+        v:destroy()
+    end
+    self._webViewList = {}
 end
+
+function nui:_syncWebViews()
+	if (self._webViewList == nil) then
+		return
+	end
+
+    -- Sync
+    for i,v in ipairs(self._webViewList) do
+        v:sync()
+    end
+end
+

@@ -80,6 +80,7 @@ end
 
 function scene:tearDown(event)  
   self.titleLabel = self.titleLabel:removeFromParent() -- remove from the scene graph, and set self.label to nil
+  self.notesInLevelLabel = self.notesInLevelLabel:removeFromParent()
   self.backButton = self.backButton:removeFromParent()
   self.startStopButton = self.startStopButton:removeFromParent()
   self.gameEngine = self.gameEngine:unload()

@@ -28,5 +28,9 @@ config =
 		assertDialogs = false, -- Display dialog boxes when asserting
 		typeChecking = true, -- Turn on type checking by default
         traceGC = true, -- Trace info on object garbage collection
+
+		makePrecompiledLua = false, -- turn on precompilation of lua files
+		usePrecompiledLua = false, -- turn on use of precompiled lua files
+		useConcatenatedLua = false, -- turn on use of concatenated precompiled lua files
 	}
 }

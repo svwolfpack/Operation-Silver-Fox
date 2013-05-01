@@ -43,6 +43,7 @@ function block:init(b, blockData)
   cItem:init(b, blockData)
   b.sprite.strokeWidth = 0
   b.speed = blockData.speed or 0 
+  b.isMoving = true
   b.explode = "explode"
   b.shrink = "shrink"
   b.none = "none"

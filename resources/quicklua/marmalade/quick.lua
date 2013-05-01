@@ -20,43 +20,33 @@
  * THE SOFTWARE.
  */--]]
 
+
 if (config.debug.makePrecompiledLua == true and config.debug.useConcatenatedLua == true) then
-	quick.startFileConcat("quicklua/openquick.lua")
+	quick.startFileConcat("quicklua/marmalade/quick.lua")
 end
 
 if ((config.debug.makePrecompiledLua == false and config.debug.useConcatenatedLua == true) == false) then
-	dofile("quicklua/class.lua")
-	dofile("quicklua/QColor.lua")
-	dofile("quicklua/QRect.lua")
-	dofile("quicklua/QVec2.lua")
-	dofile("quicklua/QTimer.lua")
-	dofile("quicklua/QDirector.lua")
-	dofile("quicklua/QFont.lua")
-	dofile("quicklua/QNode.lua")
-	dofile("quicklua/QSystem.lua")
-	dofile("quicklua/QLabel.lua")
-	dofile("quicklua/QScene.lua")
-	dofile("quicklua/QTween.lua")
-	dofile("quicklua/QEvent.lua")
-	dofile("quicklua/QPhysics.lua")
-	dofile("quicklua/Qjson.lua")
+	-- Load these in the order of any dependencies
+	dofile("quicklua/marmalade/QDevice.lua")
+	dofile("quicklua/marmalade/QVideo.lua")
 
-	if config.debug.mock_tolua == false then
-		dofile("quicklua/QLsqlite3.lua")
-	end
+	--NOTE: always load QLuasocket.lua before QCrypto.lua
+	dofile("quicklua/marmalade/QLuasocket.lua")
 
-	dofile("quicklua/QVector.lua")
-	dofile("quicklua/QLines.lua")
-	dofile("quicklua/QCircle.lua")
-	dofile("quicklua/QRectangle.lua")
-	dofile("quicklua/QAtlas.lua")
-	dofile("quicklua/QJoint.lua")
-	dofile("quicklua/QAnimation.lua")
-	dofile("quicklua/QSprite.lua")
-	dofile("quicklua/QAudio.lua")
+	--NOTE: always load QCrypto.lua after QLuasocket.lua
+	dofile("quicklua/marmalade/QCrypto.lua")
 
-	dofile("quicklua/QParticles.lua")
-	dofile("quicklua/QTiledMap.lua")
+	--NOTE: always load QNUI.lua before QAds.lua and QWebView.lua
+	dofile("quicklua/marmalade/QNUI.lua")
+
+	dofile("quicklua/marmalade/QAds.lua")
+	dofile("quicklua/marmalade/QAnalytics.lua")
+	dofile("quicklua/marmalade/QBilling.lua")
+	dofile("quicklua/marmalade/QBrowser.lua")
+	dofile("quicklua/marmalade/QCompass.lua")
+	dofile("quicklua/marmalade/QFaceBook.lua")
+	dofile("quicklua/marmalade/QLocation.lua")
+	dofile("quicklua/marmalade/QWebView.lua")
 end
 
 if (config.debug.makePrecompiledLua == true and config.debug.useConcatenatedLua == true) then
@@ -64,6 +54,6 @@ if (config.debug.makePrecompiledLua == true and config.debug.useConcatenatedLua 
 end
 
 if (config.debug.useConcatenatedLua == true) then
-	-- Load the precompiled concatenated openquick file
-	dofile("quicklua/openquick.luac")
+	-- Load the precompiled concatenated quick file
+	dofile("quicklua/marmalade/quick.luac")
 end

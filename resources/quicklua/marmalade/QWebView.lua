@@ -21,40 +21,71 @@
  */--]]
 
 --------------------------------------------------------------------------------
--- Vector
--- NOTE: This file must have no dependencies on the ones loaded after it by
--- openquick_init.lua. For example, it must have no dependencies on QDirector.lua
+-- Public API
 --------------------------------------------------------------------------------
-QVector = {}
-table.setValuesFromTable(QVector, QNode) -- previous class in hierarchy
-QVector.__index = QVector
+QWebView = {}
+QWebView.__index = QWebView
+
+QWebView.serialize = function(o)
+	local obj = serializeTLMT(getmetatable(o), o)
+	return obj
+end
+
+function QWebView:initWebView(n)
+	local np
+	np = {}
+	setmetatable(np, QWebView)
+	tolua.setpeer(n, np)
+
+    local mt = getmetatable(n) 
+    mt.__serialize = QWebView.serialize
+end
+
+function nui:createWebView(values)
+    dbg.assertFuncVarTypes({"table", "string"}, values)
+    local n = quick.QWebView()
+    QWebView:initWebView(n)
+
+    if (type(values) == "table") then
+		values.x = values.x or 0
+		values.y = values.y or 0
+		values.w = values.w or director.displayWidth
+		values.h = values.h or director.displayHeight
+		values.transparentBackground = values.transparentBackground or false
+ 
+		n:init(values.x, values.y, values.w, values.h, values.transparentBackground)
+		if (values.url ~= nil) then
+			n.url = values.url
+		end
+    else
+        -- Create full screen web view with url
+        dbg.assertFuncVarTypes({"string"}, values)
+        n:initWithUrl(values)
+    end
+
+    -- Store this WebView in the NUI singleton's WebView list
+    table.insert(self._webViewList, n)
+
+    return n
+end
 
 --------------------------------------------------------------------------------
 -- Private API
 --------------------------------------------------------------------------------
-QVector.serialize = function(o)
-	local obj = serializeTLMT(getmetatable(o), o)
-    table.setValuesFromTable(obj, serializeTLMT(getmetatable(quick.QVector), o))
-	return obj
+function nui:removeWebView(n)
+    for i,v in ipairs(self._webViewList) do
+        if v == n then
+            table.remove(self._webViewList, i)
+            break
+        end
+    end
 end
 
---[[
-/*
-Initialise the peer table for the C++ class QVector.
-This must be called immediately after the QVector() constructor.
-*/
---]]
-function QVector:initVector(n)
-	local np = {}
-    local ep = tolua.getpeer(n)
-    table.setValuesFromTable(np, ep)
-	setmetatable(np, QVector)
-	tolua.setpeer(n, np)
+function QWebView:destroy()
+    -- Remove from NUI singleton list
+    nui:removeWebView(self)
 
-    local mt = getmetatable(n) 
-    mt.__serialize = QVector.serialize
+    -- Destroy C++ object, which calls s3eWebViewDestroy()
+    dbg.print("Deleting QWebView")
+    quick.QWebView.delete()
 end
-
---------------------------------------------------------------------------------
--- Public API
---------------------------------------------------------------------------------

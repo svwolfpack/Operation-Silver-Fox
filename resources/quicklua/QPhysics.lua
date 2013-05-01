@@ -25,12 +25,12 @@
 --------------------------------------------------------------------------------
 physics = quick.physics.QSim:new()
 
-local oldNodePropsMTNI
-if config.debug.mock_tolua == true then
-	oldNodePropsMTNI = function(t, name, value) t.name = value end
-else
-	oldNodePropsMTNI = getmetatable(quick.physics.QNodeProps).__newindex
+getmetatable(physics).__serialize = function(o)
+	local obj = serializeTLMT(getmetatable(o), o)
+	return obj
 end
+
+local oldNodePropsMTNI = getmetatable(quick.physics.QNodeProps).__newindex
 NodeProps_set = function(t, name, value)
     if name == "debugDrawColor" then
         prop_setColor(t.debugDrawColor, value)
@@ -38,10 +38,6 @@ NodeProps_set = function(t, name, value)
         oldNodePropsMTNI(t, name, value)
     end
 end
-
---------------------------------------------------------------------------------
--- Private API
---------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Public API

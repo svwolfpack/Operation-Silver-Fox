@@ -20,38 +20,31 @@
  * THE SOFTWARE.
  */--]]
 
---------------------------------------------------------------------------------
--- audio singleton
---------------------------------------------------------------------------------
-audio = quick.QAudio:new()
-
---------------------------------------------------------------------------------
--- Public API
---------------------------------------------------------------------------------
 --[[
 /**
-Play a stream
-@param fileName The name of the file to play
-@param bLoop (optional) specify if the stream is to loop
-@return The created node.
+System browser calls.
 */
 --]]
-function audio:playStream( fileName, bLoop)
-    dbg.assertFuncVarType("string", fileName)
-    dbg.assertFuncVarTypes({"boolean", "nil"}, bLoop)
-    self:playStreamWithLoop( fileName, bLoop or false)
+browser = {}
+
+--[[
+/**
+Checks if the system call exec is available.
+@return true if available, false otherwise.
+*/
+--]]
+function browser:isAvailable()
+	return quick.QBrowser:isExecAvailable()
 end
 
 --[[
 /**
-Play a sound
-@param fileName The name of the file to play
-@param bLoop (optional) specify if the stream is to loop
-@return The created node.
+Perform a system call to open the system predefined browser to the specified URL.
+@param url the url to open in the browser.
+@param exitFlag if the application should exit on opening the browser (on iOS this is ignored)
+@return true on success, false otherwise.
 */
 --]]
-function audio:playSound( fileName, bLoop)
-    dbg.assertFuncVarType("string", fileName)
-    dbg.assertFuncVarTypes({"boolean", "nil"}, bLoop)
-    return self:playSoundWithLoop( fileName, bLoop or false)
+function browser:launchURL(url, exitFlag)
+	return quick.QBrowser:execUrl(url, exitFlag)
 end

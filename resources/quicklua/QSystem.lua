@@ -25,6 +25,11 @@
 --------------------------------------------------------------------------------
 system = quick.QSystem:new()
 
+getmetatable(system).__serialize = function(o)
+	local obj = serializeTLMT(getmetatable(o), o)
+	return obj
+end
+
 system.debugTime = nil -- if set, this overrides the value returned by getTime()
 system.gameTime = 0
 system.eventListeners = {}
@@ -197,7 +202,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Code for re-usable object pools
--- THIS IS NOT USED IN QUICK 1.0
+-- THIS IS NOT USED IN QUICK CURRENTLY
 --------------------------------------------------------------------------------
 
 -- objectPool class
@@ -398,11 +403,22 @@ function system:getFilePath(type, relPath)
 end
 
 --[[
+Get the current Quick version as a string.
+This is updated manually with each formal Quick release.
+--]]
+function system:getVersionString()
+    return quick.MainGetVersionString()
+end
+
+--------------------------------------------------------------------------------
+-- Code for internal debugging
+-- THIS IS NOT USED IN QUICK CURRENTLY
+--------------------------------------------------------------------------------
+--[[
 /**
 A debug helper that displays the amount of remaining memory
 */
 --]]
-
 --[[function count_all(f)
 	local seen = {}
 	local count_table

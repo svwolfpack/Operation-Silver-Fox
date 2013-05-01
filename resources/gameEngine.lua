@@ -117,7 +117,9 @@ end
 
 function gameEngine:moveBlocksThatShouldBeMoved()
   for _, block in pairs(self.blocks.objects) do
-    self:tweenBlock(block)
+    if block.isMoving then
+      self:tweenBlock(block)
+    end
   end
 end
 
@@ -169,6 +171,8 @@ function gameEngine:resolveBlockCollisions()
       for _, block in pairs(blocksInLocation.objects) do
         if index ~= self.offGridIndex then
           block.removalAnimation = block.explode
+        else
+          block.removalAnimation = block.shrink
         end
         blocksToRemove:add(block)
       end

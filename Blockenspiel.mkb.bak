@@ -53,11 +53,9 @@ options
 
 deployments
 {
-    blackberry-author = "Intrepid Games"
     name = "Blockenspiel"
-    provider = "Intrepid Games"
-    splashscreen-auto-onblack = "1"
     version-major = "0"
     version-minor = "0"
     version-revision = "1"
+    splashscreen-auto-onblack = "1"
 }
