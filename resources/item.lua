@@ -53,7 +53,7 @@ function item:init(i, itemData)
   i.yGrid = itemData.yGrid or 0
   i.spriteSize = itemData.spriteSize or 0
   i.spriteFileName = itemData.spriteFileName or "default"
-  i.itemType =itemData.itemType or ""
+  i.itemType = itemData.itemType or ""
   i.id = itemData.id or 0
   i.dockIndex = itemData.dockIndex or 0
   i.color = itemData.color or {0, 0, 0}

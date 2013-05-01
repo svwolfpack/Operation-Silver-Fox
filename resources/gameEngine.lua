@@ -82,14 +82,18 @@ function gameEngine:tweenBlock(block)
 end
 
 function gameEngine:snapBlocksToGrid()
-  for _, v in pairs(self.blocks.objects) do
-    self.grid:snapToGrid(v)
+  for _, block in pairs(self.blocks.objects) do
+    if block.tween then
+      tween:cancel(block.tween)
+    end
+    self.grid:snapToGrid(block)
   end
 end
 
 function gameEngine:spawnBlock(spawner)
  spawner.blocksSpawned = spawner.blocksSpawned + 1 
  local blockData = {}
+  blockData.itemType = "block"
   blockData.spriteSize = self.spriteSize
   blockData.x = spawner.x 
   blockData.y = spawner.y
@@ -108,9 +112,9 @@ function gameEngine:shouldSpawn(spawner)
 end
 
 function gameEngine:spawnBlocksThatShouldBeSpawned()
-  for _, v in pairs(self.items) do
-    if v.itemType == "spawner" and self:shouldSpawn(v) then
-       self:spawnBlock(v)
+  for _, item in pairs(self.items) do
+    if item.itemType == "spawner" and self:shouldSpawn(item) then
+       self:spawnBlock(item)
     end    
   end
 end
@@ -193,10 +197,7 @@ function gameEngine:resolveActionCollisions()
   self.blocks:removeSet(blocksToRemove)
 end
 
-function gameEngine:resolveCollisions()
-  self:resolveBlockCollisions()
-  self:resolveActionCollisions()
-end
+
 
 function gameEngine:displayEnding()
  self:stop()
@@ -228,8 +229,12 @@ function gameEngine:songLengthNotExceeded()
   return self.beatCount <= self.matchingEngine.lastBeatNumber
 end
 
+function gameEngine:resolveCollisions()
+  self:resolveBlockCollisions()
+  self:resolveActionCollisions()
+end
+
 function gameEngine:beat()
-  
   self:snapBlocksToGrid() 
   self:resolveCollisions()
   if self:checkForSongMatch() and self:songLengthNotExceeded() then
