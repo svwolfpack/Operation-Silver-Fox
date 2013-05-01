@@ -17,13 +17,8 @@
 			"beat" : 3
 			"note" : "C3"
 		},
-<<<<<<< Updated upstream
-{
-			"beat" : 5
-=======
 		{
-			"beat" : 5,
->>>>>>> Stashed changes
+			"beat" : 5
 			"note" : "E3"
 		},
 		{
