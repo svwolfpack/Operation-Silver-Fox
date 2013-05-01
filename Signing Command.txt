@@ -1,0 +1,1 @@
+/usr/bin/xcrun -sdk iphoneos PackageApplication -v "Blockenspiel.app" -o "/Users/Sam/out.ipa" --embed "/Users/Sam/Library/MobileDevice/Provisioning Profiles/95A7C862-7757-487F-855B-8C8B8DAEA91E.mobileprovision" --sign "iPhone Developer: Samuel Voigt (R6E42XEF8F)"

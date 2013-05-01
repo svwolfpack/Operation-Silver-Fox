@@ -1,0 +1,104 @@
+Doing: "Package" on Configuration Default to iphone
+
+running s3e_deploy commandline: /Developer/Marmalade/6.2/s3e/bin/s3e_deploy -n --debug --os iphone --arch arm --gcc /Users/Sam/Documents/Quick/Projects/Blockenspiel/build_temp/deploy_temp.py --debug-loader
+
+CWD=/Users/Sam/Documents/Quick/Projects/Blockenspiel/build_temp
+
+Marmalade Deployment Tool v1.3
+
+Copyright (C) 2001-2012 Marmalade
+
+Licensed Platforms=NONE, current platform=iphone
+
+deploying Blockenspiel [0.0.1] [arm-debug] for 'iphone' to folder: 'deployments/default/iphone/debug/intermediate_files'
+
+--> copying files ...
+
+Not using generic splashscreens for iOS
+
+--> updating s3e binary: compression=none signing=0 config-embedding=0
+
+ [execute] s3e_mod
+
+--> performing custom deployment steps for: 'iphone'
+
+ [execute] s3eRelocate
+
+ [execute] mod_apple_loader.pyc
+
+WARNING: No iPhone splashscreen specified and no generic specified to fallback on.  There will be no splashscreen displayed at runtime.
+
+WARNING: No iPad splashscreen specified and no generic specified to fallback on.  There will be no splashscreen displayed at runtime.
+
+WARNING: No iPad landscape splashscreen specified.  Using the generic splash screen
+
+signing with Developer entitlements: NOT for App Store
+
+ [execute] codesign
+
+creating .app zip: deployments/default/iphone/debug/Blockenspiel.app.zip
+
+adding app_dir to zip: deployments/default/iphone/debug/intermediate_files/Blockenspiel.app
+
+WARNING: No provisioning profile set for iOS development build - push notifications and email will not work
+
+creating IPA: deployments/default/iphone/debug/Blockenspiel.ipa
+
+creating ipa: deployments/default/iphone/debug/Blockenspiel.ipa
+
+adding app_dir to zip: deployments/default/iphone/debug/intermediate_files/Blockenspiel.app
+
+SUCCESS (WITH WARNINGS): EVALUATION USE ONLY package written to '/Users/Sam/Documents/Quick/Projects/Blockenspiel/build_temp/deployments/default/iphone/debug' [took 2.69s]. This package is not licensed for commercial use
+
+Doing: "Package" on Configuration Default to iphone
+
+running s3e_deploy commandline: /Developer/Marmalade/6.2/s3e/bin/s3e_deploy -n --debug --os iphone --arch arm --gcc /Users/Sam/Documents/Quick/Projects/Blockenspiel/build_temp/deploy_temp.py --debug-loader
+
+CWD=/Users/Sam/Documents/Quick/Projects/Blockenspiel/build_temp
+
+Marmalade Deployment Tool v1.3
+
+Copyright (C) 2001-2012 Marmalade
+
+Licensed Platforms=NONE, current platform=iphone
+
+deploying Blockenspiel [0.0.1] [arm-debug] for 'iphone' to folder: 'deployments/default/iphone/debug/intermediate_files'
+
+--> copying files ...
+
+Not using generic splashscreens for iOS
+
+--> updating s3e binary: compression=none signing=0 config-embedding=0
+
+ [execute] s3e_mod
+
+--> performing custom deployment steps for: 'iphone'
+
+ [execute] s3eRelocate
+
+ [execute] mod_apple_loader.pyc
+
+WARNING: No iPhone splashscreen specified and no generic specified to fallback on.  There will be no splashscreen displayed at runtime.
+
+WARNING: No iPad splashscreen specified and no generic specified to fallback on.  There will be no splashscreen displayed at runtime.
+
+WARNING: No iPad landscape splashscreen specified.  Using the generic splash screen
+
+signing with Developer entitlements: NOT for App Store
+
+ [execute] codesign
+
+WARNING: No provisioning profile set for iOS development build - push notifications and email will not work
+
+creating .app zip: deployments/default/iphone/debug/Blockenspiel.app.zip
+
+adding app_dir to zip: deployments/default/iphone/debug/intermediate_files/Blockenspiel.app
+
+creating IPA: deployments/default/iphone/debug/Blockenspiel.ipa
+
+creating ipa: deployments/default/iphone/debug/Blockenspiel.ipa
+
+adding app_dir to zip: deployments/default/iphone/debug/intermediate_files/Blockenspiel.app
+
+SUCCESS (WITH WARNINGS): EVALUATION USE ONLY package written to '/Users/Sam/Documents/Quick/Projects/Blockenspiel/build_temp/deployments/default/iphone/debug' [took 2.71s]. This package is not licensed for commercial use
+

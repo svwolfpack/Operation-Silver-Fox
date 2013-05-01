@@ -1,0 +1,90 @@
+{
+ 	"levelName" : "Varping!",
+	"backgroundImage" : "background1.png",
+	"gridHeight" : 2,
+	"gridWidth" : 5,
+	"tempo" : 100, 
+	"song" : [
+		{
+			"beat" : 1,
+			"note" : "C3"
+		},
+		{
+			"beat" : 2,
+			"note" : "C3"
+		},	
+		{
+			"beat" : 3,
+			"note" : "G3"
+		},
+		{
+			"beat" : 4,
+			"note" : "G3"
+		},
+		{
+			"beat" : 5,
+			"note" : "A3"
+		},	
+		{
+			"beat" : 6,
+			"note" : "A3"
+		},
+		{
+			"beat" : 7,
+			"note" : "G3"
+		}
+	],
+	"actions" : [
+		{
+			"itemType" : "spawner", 
+			"xGrid" : 1, 
+			"yGrid" : 2, 
+			"direction" : "right",
+			"repeating" : 2,
+			"frequency" : 1,
+			"speed" : 1
+		},
+		{
+			"itemType" : "note",
+			"xGrid" : 0,
+			"yGrid" : 0,
+			"instrument" : "bass",
+			"note" : "G3"
+		},
+		{
+			"itemType" : "note",
+			"xGrid" : 0,
+			"yGrid" : 0,
+			"instrument" : "bass",
+			"note" : "G3"
+		},
+		{
+			"itemType" : "note",
+			"xGrid" : 0,
+			"yGrid" : 0,
+			"instrument" : "bass",
+			"note" : "C3"
+		},
+		{
+			"itemType" : "note",
+			"xGrid" : 0,
+			"yGrid" : 0,
+			"instrument" : "bass",
+			"note" : "A3"
+		},
+		{
+			"itemType" : "portal",
+			"portalID" : 1,
+			"siblingID" : 2,
+			"xGrid" : 5,
+			"yGrid" : 2
+		},
+		{
+			"itemType" : "portal",
+			"portalID" : 2,
+			"siblingID" : 1,
+			"xGrid" : 1,
+			"yGrid" : 1
+		}
+	]
+}

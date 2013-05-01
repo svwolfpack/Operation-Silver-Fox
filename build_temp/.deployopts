@@ -1,0 +1,7 @@
+build "ARM GCC Debug"
+outdir "/Users/Sam/Documents/Quick/Projects/Blockenspiel/build_temp"
+!task !name "Default:iphone" "Package"
+!task loader "Debug"
+!config !name "Default"
+!config <os> "win32" "iphone"
+configlist "Default",

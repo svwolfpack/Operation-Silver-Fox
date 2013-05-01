@@ -54,6 +54,7 @@ options
 deployments
 {
     blackberry-author = "Intrepid Games"
+    iphone-appid = "io.intrepid.Blockenspiel"
     name = "Blockenspiel"
     provider = "Intrepid Games"
     splashscreen-auto-onblack = "1"
