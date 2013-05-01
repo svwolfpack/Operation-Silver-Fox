@@ -1,33 +1,50 @@
+
 {
- 	"levelName" : "Zis Is Easy!",
+ 	"levelName" : "Kakerlake",
 	"backgroundImage" : "background1.png",
-	"gridHeight" : 2,
+	"gridHeight" : 4,
 	"gridWidth" : 6,
 	"tempo" : 100, 
 	"song" : [
 		{
 			"beat" : 1,
-			"note" : "E3"
+			"note" : "C3"
 		},
 		{
 			"beat" : 2,
-			"note" : "D3"
+			"note" : "C3"
 		},	
 		{
 			"beat" : 3,
 			"note" : "C3"
 		},
-{
-			"beat" : 5,
-			"note" : "E3"
+		{
+			"beat" : 4,
+			"note" : "F3"
 		},
 		{
-			"beat" : 6,
-			"note" : "D3"
+			"beat" : 7,
+			"note" : "A3"
 		},	
 		{
-			"beat" : 7,
+			"beat" : 9,
 			"note" : "C3"
+		},
+		{
+			"beat" : 10,
+			"note" : "C3"
+		},
+		{
+			"beat" : 11,
+			"note" : "C3"
+		},
+		{
+			"beat" : 12,
+			"note" : "F3"
+		},
+		{
+			"beat" : 15,
+			"note" : "A3"
 		}
 	],
 
@@ -35,34 +52,34 @@
 		{
 			"itemType" : "spawner", 
 			"xGrid" : 1, 
-			"yGrid" : 1, 
-			"direction" : "right",
-			"repeating" : 1,
-			"frequency" : 1,
+			"yGrid" : 4, 
+			"direction" : "down",
+			"repeating" : 2,
+			"frequency" : 8,
 			"speed" : 1
 		},
 		{
 			"itemType" : "spawner", 
 			"xGrid" : 6, 
-			"yGrid" : 2, 
-			"direction" : "left",
-			"repeating" : 1,
-			"frequency" : 1,
+			"yGrid" : 4, 
+			"direction" : "down",
+			"repeating" : 2,
+			"frequency" : 8,
 			"speed" : 1
 		},
 		{
-			"itemType" : "note",
-			"xGrid" : 0,
-			"yGrid" : 0,
-			"instrument" : "bass",
-			"note" : "E3"
+		"itemType" : "portal",
+		"portalID" : 1,
+		"siblingID" : 2,
+		"xGrid" : 1,
+		"yGrid" : 2
 		},
 		{
-			"itemType" : "note",
-			"xGrid" : 0,
-			"yGrid" : 0,
-			"instrument" : "bass",
-			"note" : "D3"
+		"itemType" : "portal",
+		"portalID" : 2,
+		"siblingID" : 1,
+		"xGrid" : 4,
+		"yGrid" : 3
 		},
 		{
 			"itemType" : "note",
@@ -71,17 +88,46 @@
 			"instrument" : "bass",
 			"note" : "C3"
 		},
+		{
+			"itemType" : "note",
+			"xGrid" : 0,
+			"yGrid" : 0,
+			"instrument" : "bass",
+			"note" : "F3"
+		},
+		{
+			"itemType" : "note",
+			"xGrid" : 0,
+			"yGrid" : 0,
+			"instrument" : "bass",
+			"note" : "A3"
+		},
 	       	{
 			"itemType" : "directionArrow",
 			"xGrid" : 0,
 			"yGrid" : 0,
-			"direction" : "down"
+			"direction" : "left"
 		},
 		{
 			"itemType" : "directionArrow",
 			"xGrid" : 0,
 			"yGrid" : 0,
-			"direction" : "right"
+			"direction" : "up"
+		},
+		{
+			"itemType" : "hole",
+			"xGrid" : 1,
+			"yGrid" : 1
+		},
+		{
+			"itemType" : "hole",
+			"xGrid" : 2,
+			"yGrid" : 1
+		},
+		{
+			"itemType" : "hole",
+			"xGrid" : 3,
+			"yGrid" : 1
 		}
 	]
 }
