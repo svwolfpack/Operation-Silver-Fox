@@ -4,7 +4,7 @@
 	"backgroundImage" : "background1.png",
 	"gridHeight" : 4,
 	"gridWidth" : 6,
-	"tempo" : 100, 
+	"tempo" : 160, 
 	"song" : [
 		{
 			"beat" : 1,
@@ -52,7 +52,8 @@
 		{
 			"itemType" : "spawner", 
 			"xGrid" : 1, 
-			"yGrid" : 4, 
+			"yGrid" : 4,
+			"movable" : "no", 
 			"direction" : "down",
 			"repeating" : 2,
 			"frequency" : 8,
@@ -62,24 +63,27 @@
 			"itemType" : "spawner", 
 			"xGrid" : 6, 
 			"yGrid" : 4, 
+			"movable" : "no",
 			"direction" : "down",
 			"repeating" : 2,
 			"frequency" : 8,
 			"speed" : 1
 		},
 		{
-		"itemType" : "portal",
-		"portalID" : 1,
-		"siblingID" : 2,
-		"xGrid" : 1,
-		"yGrid" : 2
+			"itemType" : "portal",
+			"portalID" : 1,
+			"movable" : "no",
+			"siblingID" : 2,
+			"xGrid" : 1,
+			"yGrid" : 2
 		},
 		{
-		"itemType" : "portal",
-		"portalID" : 2,
-		"siblingID" : 1,
-		"xGrid" : 4,
-		"yGrid" : 3
+			"itemType" : "portal",
+			"portalID" : 2,
+			"siblingID" : 1,
+			"movable" : "no",
+			"xGrid" : 4,
+			"yGrid" : 3
 		},
 		{
 			"itemType" : "note",

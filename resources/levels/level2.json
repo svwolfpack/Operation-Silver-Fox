@@ -39,6 +39,7 @@
 			"itemType" : "spawner", 
 			"xGrid" : 1, 
 			"yGrid" : 2, 
+			"movable" : "no",
 			"direction" : "right",
 			"repeating" : 2,
 			"frequency" : 1,
@@ -76,6 +77,7 @@
 			"itemType" : "portal",
 			"portalID" : 1,
 			"siblingID" : 2,
+			"movable" : "no",
 			"xGrid" : 5,
 			"yGrid" : 2
 		},
@@ -83,6 +85,7 @@
 			"itemType" : "portal",
 			"portalID" : 2,
 			"siblingID" : 1,
+			"movable" : "no",
 			"xGrid" : 1,
 			"yGrid" : 1
 		}

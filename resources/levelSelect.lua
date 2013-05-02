@@ -12,7 +12,7 @@ local scene = director:createScene()
 
 local loadLevelList = function()
   print "fake loading levels..."  
-  return {{name = "Eins", fileName = "level1.json"}, {name = "Zwei", fileName = "level2.json"}, {name = "Drei", fileName = "level3.json"}, {name = "Vier", fileName = "level1.json"}} 
+  return {{name = "Eins", fileName = "level1.json"}, {name = "Zwei", fileName = "level2.json"}, {name = "Drei", fileName = "level3.json"}, {name = "Vier", fileName = "blank.json"}} 
 end
 
 function scene:setUp(event)
