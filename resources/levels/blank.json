@@ -15,7 +15,7 @@
 		{
 			"itemType" : "spawner", 
 			"xGrid" : 1, 
-			"yGrid" : 4,
+			"yGrid" : 7,
 			"direction" : "down",
 			"repeating" : 2,
 			"frequency" : 8,
