@@ -9,7 +9,7 @@
 local cTouchItem = dofile("touchItem.lua")
 local actionPortal = inheritsFrom(cTouchItem)
 
-function actionPortal:centerCollisionWithItem(cTouchItem)
+function actionPortal:centerCollisionWithItem(item)
   item.x = self.sibling.x
   item.y = self.sibling.y
   item:updateSpriteLocation()
