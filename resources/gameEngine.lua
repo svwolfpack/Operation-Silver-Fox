@@ -257,7 +257,7 @@ function gameEngine:update(event)
     self.elapsedBeatTime = self.elapsedBeatTime + system.deltaTime
     if self.elapsedBeatTime >= self.secondsPerBeat then
       self:beat()
-      self.elapsedBeatTime = 0
+      self.elapsedBeatTime = self.elapsedBeatTime - self.secondsPerBeat 
    end
   end
 end
