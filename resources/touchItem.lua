@@ -48,17 +48,17 @@ function touchItem:setupTouchForItem()
   self.sprite:addEventListener("touch", self) 
 end
 
-function touchItem:new(itemJSONData)
+function touchItem:new(itemData)
   local i = item:create()
-  item:init(i, itemJSONData)
+  item:init(i, itemData)
   return i
 end
 
-function touchItem:init(i, itemJSONData)
-  cItem:init(i, itemJSONData)
-  i.gameEngine = itemJSONData.gameEngine or {}
+function touchItem:init(i, itemData)
+  cItem:init(i, itemData)
+  i.gameEngine = itemData.gameEngine or {}
   touchItem.setupTouchForItem(i)
-  i.movable = true
+  i.movable = itemData.movable ~= "no"
   i.wiggling = {}
 end
 

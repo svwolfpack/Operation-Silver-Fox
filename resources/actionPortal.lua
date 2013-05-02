@@ -6,10 +6,10 @@
 	Portal Object
 --]]
 
-local cItem = dofile("item.lua")
-local actionPortal = inheritsFrom(cItem)
+local cTouchItem = dofile("touchItem.lua")
+local actionPortal = inheritsFrom(cTouchItem)
 
-function actionPortal:centerCollisionWithItem(item)
+function actionPortal:centerCollisionWithItem(cTouchItem)
   item.x = self.sibling.x
   item.y = self.sibling.y
   item:updateSpriteLocation()
@@ -28,7 +28,7 @@ end
 
 function actionPortal:init(a, itemData)
   itemData.color = {200, 0, 200}
-  cItem:init(a, itemData)
+  cTouchItem:init(a, itemData)
   a.portalID = itemData.portalID
   a.siblingID = itemData.siblingID
   a.sibling = {}

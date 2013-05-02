@@ -6,8 +6,8 @@
 	Spawner Object
 --]]
 
-local cItem = dofile("item.lua")
-local actionSpawner = inheritsFrom(cItem)
+local cTouchItem = dofile("touchItem.lua")
+local actionSpawner = inheritsFrom(cTouchItem)
 
 function actionSpawner:centerCollisionWithItem(item)
   item.removalAnimation = item.explode
@@ -43,17 +43,13 @@ end
 
 function actionSpawner:init(a, itemData)
   itemData.color = {255, 0, 0}
-  itemData.movable = false
-      
-  cItem:init(a, itemData)
-  
+  cTouchItem:init(a, itemData)
   a.repeating = itemData.repeating or 0
   a.frequency = itemData.frequency or 0
   a.speed = itemData.speed or 0
   a.blocksSpawned = 0
 
   actionSpawner.addDotsToSprite(a)
- 
 end
 
 return actionSpawner
