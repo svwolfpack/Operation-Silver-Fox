@@ -45,6 +45,11 @@
 			"yGrid" : 3
 		},
 		{
+			"itemType" : "rest",
+			"xGrid" : 6,
+			"yGrid" : 3
+		},
+		{
 			"itemType" : "note",
 			"xGrid" : 0,
 			"yGrid" : 0,

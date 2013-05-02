@@ -12,6 +12,7 @@ local cGrid = dofile("grid.lua")
 local cActionDirection = dofile("actionDirection.lua")
 local cActionNote = dofile("actionNote.lua")
 local cActionHole = dofile("actionHole.lua")
+local cActionRest = dofile("actionRest.lua")
 local cActionPortal = dofile("actionPortal.lua")
 local cActionSpawner = dofile("actionSpawner.lua")
 local cBlock = dofile("block.lua")
@@ -234,9 +235,18 @@ function gameEngine:resolveCollisions()
   self:resolveActionCollisions()
 end
 
+function gameEngine:releaseBlocks()
+  for _, item in pairs(self.items) do
+    if item.itemType == "rest" and item.block then
+      item:beat()
+    end
+  end
+end
+
 function gameEngine:beat()
-  self:snapBlocksToGrid() 
+  self:snapBlocksToGrid()
   self:resolveCollisions()
+  self:releaseBlocks()
   if self:checkForSongMatch() and self:songLengthNotExceeded() then
     self:spawnBlocksThatShouldBeSpawned()
     self:moveBlocksThatShouldBeMoved()
@@ -314,6 +324,9 @@ function gameEngine:loadActions()
       item = cActionHole:new(itemJSONData)
     elseif itemJSONData.itemType == "portal" then
       item = cActionPortal:new(itemJSONData)
+    elseif itemJSONData.itemType == "rest" then
+      itemJSONData.secondsPerBeat = self.secondsPerBeat
+      item = cActionRest:new(itemJSONData)
     end
     table.insert(self.items, item)
   end
