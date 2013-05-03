@@ -16,6 +16,7 @@ local cActionRest = dofile("actionRest.lua")
 local cActionPortal = dofile("actionPortal.lua")
 local cActionSpawner = dofile("actionSpawner.lua")
 local cActionSplitter = dofile("actionSplitter.lua")
+local cActionTurret = dofile("actionTurret.lua")
 local cBlock = dofile("block.lua")
 local cDock = dofile("dock.lua") 
 local cMutableSet = dofile("mutableSet.lua")
@@ -204,8 +205,6 @@ function gameEngine:resolveActionCollisions()
   self.blocks:addSet(blocksToSpawnSet)
 end
 
-
-
 function gameEngine:displayEnding()
  self:stop()
     
@@ -253,9 +252,13 @@ function gameEngine:beat()
   end  
 end
 
-function gameEngine:resetSpawners()
-  for _, v in pairs(self.items) do
-    if v.itemType == "spawner" then v.blocksSpawned = 0 end
+function gameEngine:resetItems()
+  for _, item in pairs(self.items) do
+    if item.itemType == "spawner" then 
+      item.blocksSpawned = 0 
+    elseif item.itemType == "turret" then
+      item:reset()
+    end
   end
 end
 
@@ -289,7 +292,7 @@ end
 function gameEngine:stop()
   self:setRunning(false)
   self.blocks = self:removeAllBlocks()
-  self:resetSpawners()  
+  self:resetItems()  
 end
 
 function gameEngine:setupPortals()
@@ -319,12 +322,13 @@ function gameEngine:loadActions()
       item = cActionDirection:new(itemJSONData)
     elseif itemJSONData.itemType == "hole" then
       item = cActionHole:new(itemJSONData)
+    elseif itemJSONData.itemType == "turret" then
+      item = cActionTurret:new(itemJSONData)
     elseif itemJSONData.itemType == "portal" then
       item = cActionPortal:new(itemJSONData)
     elseif itemJSONData.itemType == "splitter" then
       item = cActionSplitter:new(itemJSONData)
     elseif itemJSONData.itemType == "rest" then
-      itemJSONData.secondsPerBeat = self.secondsPerBeat
       item = cActionRest:new(itemJSONData)
     end
     table.insert(self.items, item)

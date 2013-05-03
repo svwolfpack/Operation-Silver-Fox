@@ -33,7 +33,6 @@ end
 function actionRest:init(a, itemData)
   itemData.color = {0, 150, 255}
   cTouchItem:init(a, itemData)
-  a.secondsPerBeat = itemData.secondsPerBeat or 1
   a.beatCount = 0
   a.block = nil
 end

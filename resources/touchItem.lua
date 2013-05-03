@@ -10,13 +10,14 @@ local cItem = dofile("item.lua")
 local touchItem = inheritsFrom(cItem)
 
 function touchItem:startWiggling()
-  tween:to(self.sprite, {rotation = -10, time = .1})
-  self.wiggling = tween:to(self.sprite, {rotation = 10, easing = ease.sineInOut, time = .2, mode = "mirror", delay = .1})
+  self.initialRotation = self.sprite.rotation
+  tween:to(self.sprite, {rotation = self.initialRotation - 10, time = .1})
+  self.wiggling = tween:to(self.sprite, {rotation = self.initialRotation + 20, easing = ease.sineInOut, time = .2, mode = "mirror", delay = .1})
 end
 
 function touchItem:stopWiggling()
   tween:cancel(self.wiggling)
-  tween:to(self.sprite, {rotation = 0, time = .1})
+  tween:to(self.sprite, {rotation = self.initialRotation, time = .1})
 end
 
 function touchItem:setupTouchForItem()
@@ -58,6 +59,7 @@ function touchItem:init(i, itemData)
   cItem:init(i, itemData)
   i.gameEngine = itemData.gameEngine or {}
   touchItem.setupTouchForItem(i)
+  i.initialRotation = i.sprite.rotation
   i.movable = itemData.movable ~= "no"
   i.wiggling = {}
 end

@@ -13,6 +13,26 @@
 	],
 	"actions" : [
 		{
+			"itemType" : "turret", 
+			"xGrid" : 4, 
+			"yGrid" : 4,
+			"pattern" : [
+			{
+				"direction" : "up"
+			},
+			{
+				"direction" : "right"
+			},
+			{
+				"direction" : "down"
+			},
+			{
+				"direction" : "left"
+			}
+			]
+		},
+
+		{
 			"itemType" : "splitter", 
 			"xGrid" : 3, 
 			"yGrid" : 6
