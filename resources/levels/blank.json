@@ -28,6 +28,15 @@
 		},
 		{
 			"itemType" : "spawner", 
+			"xGrid" : 7, 
+			"yGrid" : 6,
+			"direction" : "left",
+			"repeating" : 1,
+			"frequency" : 8,
+			"speed" : 1
+		},
+		{
+			"itemType" : "spawner", 
 			"xGrid" : 6, 
 			"yGrid" : 4, 
 			"direction" : "down",

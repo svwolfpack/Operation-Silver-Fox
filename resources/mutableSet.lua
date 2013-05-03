@@ -8,21 +8,27 @@
 
 local mutableSet = inheritsFrom(baseClass)
 
-function mutableSet:add(object)
-  table.insert(self.objects, object)
+function mutableSet:add(objectToAdd)
+  table.insert(self.objects, objectToAdd)
 end
 
-function mutableSet:remove(object)
+function mutableSet:remove(objectToRemove)
   local removeIndex = 0
-  for i, v in ipairs(self.objects) do
-    if v == object then removeIndex = i end
+  for i, object in ipairs(self.objects) do
+    if object == objectToRemove then removeIndex = i end
   end
   table.remove(self.objects, removeIndex)
 end
 
+function mutableSet:addSet(set)
+  for _, object in pairs(set.objects) do
+    self:add(object)
+  end
+end
+
 function mutableSet:removeSet(set)
-  for k, v in pairs(set.objects) do
-    self:remove(v)
+  for _, object in pairs(set.objects) do
+    self:remove(object)
   end
 end
 

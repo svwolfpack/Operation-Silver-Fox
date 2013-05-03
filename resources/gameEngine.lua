@@ -112,12 +112,6 @@ function gameEngine:shouldSpawn(spawner)
 end
 
 function gameEngine:spawnBlocksThatShouldBeSpawned()
-  --for _, item in pairs(self.blocksToSpawn.objects) do
-  --  self.blocks:add(item)
-  --end
-  --self.blocksToSpawn = nil
-  --self.blocksToSpawn = cMutableSet:new()
-  
   for _, item in pairs(self.items) do
     if item.itemType == "spawner" and self:shouldSpawn(item) then
        self:spawnBlockFromSpawner(item)
@@ -192,18 +186,22 @@ function gameEngine:resolveBlockCollisions()
 end
 
 function gameEngine:resolveActionCollisions()
-  local blocksToRemove = cMutableSet:new()
-  local spawnblock 
+  local blocksToRemoveSet = cMutableSet:new()
+  local blocksToSpawnSet = cMutableSet:new()
   for _, block in pairs(self.blocks.objects) do
     local action = self.actionsByLocation[self:indexForItem(block)] or nil
     if action and self:itemsDidCenterCollide(action, block) then
-      local blockToRemove, blockToSpawn = action:centerCollisionWithItem(block) -- We don't want to be removing blocks as we're looping through them, so we need to just flag 'em and remove them at the end
-      if blockToRemove then blocksToRemove:add(blockToRemove) end
-      if blockToSpawn then spawnblock = blockToSpawn end
+      local blockToRemove, blocksToSpawn = action:centerCollisionWithItem(block) -- We don't want to be removing blocks as we're looping through them, so we need to just flag 'em and remove them at the end
+      if blockToRemove then blocksToRemoveSet:add(blockToRemove) end
+      if blocksToSpawn then 
+        for _, block in pairs(blocksToSpawn) do
+          blocksToSpawnSet:add(block) 
+         end
+      end
     end
   end
-  self.blocks:removeSet(blocksToRemove)
-  self.blocks:add(spawnblock)
+  self.blocks:removeSet(blocksToRemoveSet)
+  self.blocks:addSet(blocksToSpawnSet)
 end
 
 

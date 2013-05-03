@@ -10,13 +10,9 @@ local cTouchItem = dofile("touchItem.lua")
 local cBlock = dofile("block.lua")
 local actionSplitter = inheritsFrom(cTouchItem)
 
-
-
 function actionSplitter:centerCollisionWithItem(item)
  
- dbg.printTable(item)
- 
-  local splitDirection
+ local splitDirection
   if item.direction == "up" or item.direction == "down" then
     item.direction = "left"
     splitDirection = "right"
@@ -24,17 +20,15 @@ function actionSplitter:centerCollisionWithItem(item)
     item.direction = "up"
     splitDirection  = "down"
   end
-  
-  
+    
   local blockData = {}
   blockData.itemType = "block"
   blockData.spriteSize = self.spriteSize
   blockData.x = self.x 
   blockData.y = self.y
   blockData.direction = splitDirection
-  print ("split: " .. splitDirection)
-  local newBlock = cBlock:new(blockData)
-  return nil, newBlock
+  
+  return nil, {cBlock:new(blockData)}
 end
 
 function actionSplitter:new(itemData)
