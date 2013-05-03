@@ -15,6 +15,7 @@ local cActionHole = dofile("actionHole.lua")
 local cActionRest = dofile("actionRest.lua")
 local cActionPortal = dofile("actionPortal.lua")
 local cActionSpawner = dofile("actionSpawner.lua")
+local cActionSplitter = dofile("actionSplitter.lua")
 local cBlock = dofile("block.lua")
 local cDock = dofile("dock.lua") 
 local cMutableSet = dofile("mutableSet.lua")
@@ -68,18 +69,16 @@ function gameEngine:removeAllBlocks()
 end
 
 function gameEngine:tweenBlock(block)
-  if block.speed ~= 0 then
-    if block.direction == "up" then
-      block.y = block.y + block.spriteSize
-    elseif block.direction == "down" then
-      block.y = block.y - block.spriteSize
-    elseif block.direction == "left" then
-      block.x = block.x - block.spriteSize
-    elseif block.direction == "right" then
-      block.x = block.x + block.spriteSize
-    end
-    block:updateSpriteLocationWithTween(self.secondsPerBeat)
+  if block.direction == "up" then
+    block.y = block.y + block.spriteSize
+  elseif block.direction == "down" then
+    block.y = block.y - block.spriteSize
+  elseif block.direction == "left" then
+    block.x = block.x - block.spriteSize
+  elseif block.direction == "right" then
+    block.x = block.x + block.spriteSize
   end
+  block:updateSpriteLocationWithTween(self.secondsPerBeat)
 end
 
 function gameEngine:snapBlocksToGrid()
@@ -91,7 +90,7 @@ function gameEngine:snapBlocksToGrid()
   end
 end
 
-function gameEngine:spawnBlock(spawner)
+function gameEngine:spawnBlockFromSpawner(spawner)
  spawner.blocksSpawned = spawner.blocksSpawned + 1 
  local blockData = {}
   blockData.itemType = "block"
@@ -113,9 +112,15 @@ function gameEngine:shouldSpawn(spawner)
 end
 
 function gameEngine:spawnBlocksThatShouldBeSpawned()
+  --for _, item in pairs(self.blocksToSpawn.objects) do
+  --  self.blocks:add(item)
+  --end
+  --self.blocksToSpawn = nil
+  --self.blocksToSpawn = cMutableSet:new()
+  
   for _, item in pairs(self.items) do
     if item.itemType == "spawner" and self:shouldSpawn(item) then
-       self:spawnBlock(item)
+       self:spawnBlockFromSpawner(item)
     end    
   end
 end
@@ -188,14 +193,17 @@ end
 
 function gameEngine:resolveActionCollisions()
   local blocksToRemove = cMutableSet:new()
+  local spawnblock 
   for _, block in pairs(self.blocks.objects) do
     local action = self.actionsByLocation[self:indexForItem(block)] or nil
     if action and self:itemsDidCenterCollide(action, block) then
-      local blockToRemove = action:centerCollisionWithItem(block) -- We don't want to be removing blocks as we're looping through them, so we need to just flag 'em and remove them at the end
+      local blockToRemove, blockToSpawn = action:centerCollisionWithItem(block) -- We don't want to be removing blocks as we're looping through them, so we need to just flag 'em and remove them at the end
       if blockToRemove then blocksToRemove:add(blockToRemove) end
+      if blockToSpawn then spawnblock = blockToSpawn end
     end
   end
   self.blocks:removeSet(blocksToRemove)
+  self.blocks:add(spawnblock)
 end
 
 
@@ -315,6 +323,8 @@ function gameEngine:loadActions()
       item = cActionHole:new(itemJSONData)
     elseif itemJSONData.itemType == "portal" then
       item = cActionPortal:new(itemJSONData)
+    elseif itemJSONData.itemType == "splitter" then
+      item = cActionSplitter:new(itemJSONData)
     elseif itemJSONData.itemType == "rest" then
       itemJSONData.secondsPerBeat = self.secondsPerBeat
       item = cActionRest:new(itemJSONData)
@@ -351,6 +361,7 @@ function gameEngine:init(g, levelData)
   g.items = {}
   g.actionsByLocation = {}
   g.blocks = cBlockMutableSet:new()
+  g.blocksToSpawn = cMutableSet:new()
   g.blocksByLocation = {}
   g.tempo = levelData.tempo
   g.secondsPerBeat = 60 / g.tempo

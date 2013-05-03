@@ -24,9 +24,9 @@ function actionRest:centerCollisionWithItem(item)
   return nil
 end
 
-function actionRest:new(itemJSONData)
+function actionRest:new(itemData)
   local a = actionRest:create()
-  actionRest:init(a, itemJSONData)
+  actionRest:init(a, itemData)
   return a
 end
 

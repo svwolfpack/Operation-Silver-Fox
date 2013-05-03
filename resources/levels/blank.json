@@ -13,11 +13,16 @@
 	],
 	"actions" : [
 		{
+			"itemType" : "splitter", 
+			"xGrid" : 3, 
+			"yGrid" : 6
+		},		
+		{
 			"itemType" : "spawner", 
-			"xGrid" : 1, 
-			"yGrid" : 7,
+			"xGrid" : 3, 
+			"yGrid" : 8,
 			"direction" : "down",
-			"repeating" : 2,
+			"repeating" : 1,
 			"frequency" : 8,
 			"speed" : 1
 		},
