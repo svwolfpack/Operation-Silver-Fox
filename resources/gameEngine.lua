@@ -235,18 +235,9 @@ function gameEngine:resolveCollisions()
   self:resolveActionCollisions()
 end
 
-function gameEngine:releaseBlocks()
-  for _, item in pairs(self.items) do
-    if item.itemType == "rest" and item.block then
-      item:beat()
-    end
-  end
-end
-
 function gameEngine:beat()
   self:snapBlocksToGrid()
   self:resolveCollisions()
-  self:releaseBlocks()
   if self:checkForSongMatch() and self:songLengthNotExceeded() then
     self:spawnBlocksThatShouldBeSpawned()
     self:moveBlocksThatShouldBeMoved()

@@ -7,7 +7,6 @@
 
 --]]
 
-
 local scene = director:createScene()
 
 local loadLevelList = function()

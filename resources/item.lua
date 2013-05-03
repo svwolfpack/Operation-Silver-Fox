@@ -58,8 +58,6 @@ function item:init(i, itemData)
   i.dockIndex = itemData.dockIndex or 0
   i.color = itemData.color or {0, 0, 0}
   i.alpha = itemData.alpha or 1.0
-  --i.moving = itemData.moving or false
-  i.movable = itemData.movable or false
   i.direction = itemData.direction or ""
   i.sprite = itemData.sprite or {}
   i.engineRunning = itemData.engineRunning or false

@@ -9,21 +9,18 @@
 local cTouchItem = dofile("touchItem.lua")
 local actionRest = inheritsFrom(cTouchItem)
 
-function actionRest:beat()
-  if self.beatCount == 1 then
+function actionRest:releaseBlock()
     self.block.isMoving = true
     self.block = nil
-  else
-    self.beatCount = self.beatCount + 1
-  end
 end
 
 function actionRest:centerCollisionWithItem(item)
   if item ~= self.block then
-    self.beatCount = 0
+    self.block = item
+    self.block.isMoving = false
+  else
+    self:releaseBlock()
   end
-  self.block = item
-  self.block.isMoving = false
   return nil
 end
 
